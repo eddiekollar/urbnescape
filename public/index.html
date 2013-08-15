@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="urbnEscape">
+<head>
+    <title>Urban Escape</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/public/img/favicon.ico">
+    <link rel="stylesheet" href="/public/css/main.css" />
+    <link rel="stylesheet" href="/public/css/ng.css">
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/bower_components/bootstrap/dist/css/bootstrap-glyphicons.css">
+</head>
+<body>
+    <div class="container-narrow">
+        <div class="header">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="#/placesView">Places</a></li>
+                <li class="active"><a href="#/addPlaceView">Add Place</a></li>
+            </ul>
+            <h3 class="text-muted"><img src="/public/img/logo.png"> </h3>
+        </div>
+
+        <div class="well">
+            <div ng-view ng-animate="{enter: 'view-enter', leave:'view-leave'}"></div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; Urban Escape 2013</p>
+        </div>
+    </div>
+    <!-- External library references -->
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js"></script>
+
+    <!-- AngularJS library and app code -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+    <script src="/public/js/app/app.js"></script>
+    <script src="/public/js/app/services.js"></script>
+    <script src="/public/js/app/controllers.js"></script>
+    <script src="/public/js/app/filters.js"></script>
+    <script src="/public/js/app/directives.js"></script>
+</body>
+</html>

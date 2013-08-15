@@ -1,0 +1,26 @@
+.view-enter, .view-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+    -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+    -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1.5s;
+}
+
+.view-enter {
+    opacity:0;
+
+    position:relative;
+}
+.view-enter.view-enter-active {
+
+    opacity:1;
+}
+
+.view-leave {
+    position:relative;
+
+    opacity:1;
+}
+.view-leave.view-leave-active {
+
+    opacity:0;
+}
