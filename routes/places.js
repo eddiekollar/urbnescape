@@ -7,10 +7,8 @@
  */
 
 var fs = require('fs')
-    , path = require('path');
-
-//TODO: Add database connectivity
-
+    , path = require('path')
+    , Place = require('../models/place.js');
 
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -18,16 +16,42 @@ exports.findById = function(req, res) {
 
 };
 
+exports.findByCategory = function(req, res) {
+    var category = req.query.category;
+    console.log('Retrieving places by category: ' + category);
+
+    var query = Place.find({category: category});
+
+    query.exec(function (err, places) {
+        if (err) console.log(err);
+        res.send(places);
+        console.log('Number of places found: ', places.length);
+    });
+};
+
 exports.findAll = function(req, res) {
     console.log('Retrieving all places.');
     //return all places
+    var query = Place.find({});
 
+    query.exec(function (err, places) {
+        if (err) console.log(err);
+        res.send(places);
+        console.log('Number of places found: %i', places.length);
+    });
 };
 
 exports.addPlace = function(req, res) {
     var place = req.body;
-    console.log('Adding place: ' + JSON.stringify(place));
 
+    new Place(place).save(function (err) {
+        if (err){
+            console.log('Error' + err)
+        }
+
+        console.log('Added place: ' + JSON.stringify(place));
+    });
+    /*
     var outputFilename = path.dirname(__dirname) + '/data/places.json';
 
     fs.appendFile(outputFilename, JSON.stringify(place, null, 4), function(err) {
@@ -39,5 +63,6 @@ exports.addPlace = function(req, res) {
             res.send(req.body);
         }
     });
+    */
 
 };

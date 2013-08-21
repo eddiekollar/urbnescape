@@ -7,10 +7,12 @@
  */
 
 var express = require("express")
+    , mongoose = require('mongoose')
     , path = require('path')
     , places = require('./routes/places');
 
 var app = express();
+mongoose.connect('mongodb://localhost/urbnescape');
 
 app.use(express.logger());
 app.use(express.bodyParser());
@@ -25,6 +27,7 @@ app.get('/', function(req, res){
 
 app.get('/places', places.findAll);
 app.get('/places/:id', places.findById);
+app.get('/placeslist', places.findByCategory);
 
 app.post('/places', places.addPlace);
 

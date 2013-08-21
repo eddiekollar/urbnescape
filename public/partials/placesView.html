@@ -1,1 +1,25 @@
-<div></div>
+<div class="container" ng-controller="PlacesCtrl" class="add-place-form">
+    <h1>{{ category }}S</h1>
+    <div>
+        <div class="pull-right addplace-btn">
+            <a class="btn btn-warning" href="#/addPlaceView">
+                    KNOW OF OTHER PLACES?
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+            </a>
+        </div>
+        <div ng-repeat="place in places">
+            <div class="well col-lg-12">
+                <p class="col-offset-3">{{ place.name }}</p>
+                <p class="col-offset-3">{{ place.description }}</p>
+                {{ place.location }}
+                {{ place.lat }}
+                {{ place.lon }}
+                {{ place.category }}
+
+                {{ place.quietlevel }}
+                {{ place.crowd }}
+                {{ place.tips }}
+            </div>
+        </div>
+    </div>
+</div>

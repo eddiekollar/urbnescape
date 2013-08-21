@@ -1,0 +1,17 @@
+#IDE folder and data
+.idea/
+
+#Angular-seed files
+angular-seed/
+
+#Test JSON data
+data/
+
+#External js libraries
+public/bower_components/
+public/js/*.geosearch.*
+public/lib/
+
+#Node related
+npm-debug.log
+node_modules/

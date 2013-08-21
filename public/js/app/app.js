@@ -6,5 +6,6 @@ angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbn
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/addPlaceView', {templateUrl: '/public/partials/addPlaceView.html', controller: 'AddPlaceCtrl'});
     $routeProvider.when('/placesView', {templateUrl: '/public/partials/placesView.html', controller: 'PlacesCtrl'});
-    $routeProvider.otherwise({redirectTo: '/addPlaceView'});
+    $routeProvider.when('/placeDetailsView', {templateUrl: '/public/partials/placeDetailsView.html', controller: 'PlaceDetailsCtrl'});
+    $routeProvider.otherwise({redirectTo: '/placesView'});
   }]);
