@@ -1,0 +1,17 @@
+<div class="container">
+
+    <div id="map" class="col-lg-12" ng-controller="MapCtrl"></div>
+
+    <div class="well col-12" ng-controller="PlaceDetailsCtrl" ng-model="place">
+        <p class="col-offset-3">{{ place.name }}</p>
+        <p class="col-offset-3">{{ place.description }}</p>
+        {{ place.location }}
+        {{ place.lat }}
+        {{ place.lon }}
+        {{ place.category }}
+
+        {{ place.quietlevel }}
+        {{ place.crowd }}
+        {{ place.tips }}
+    </div>
+</div>

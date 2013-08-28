@@ -23,4 +23,28 @@ angular.module('urbnEscape.services', []).
         return {
             name : "VIEW"
         };
-    });
+  })
+  .factory('CurrentPlaceService', function(){
+        var CurrentPlaceService = {};
+        var currentPlace = {
+            name: '',
+            location: '',
+            lat: 0,
+            lon: 0,
+            category: '',
+            description: '',
+            quietlevel: 1,
+            crowd: 1,
+            tips: ''
+        };
+
+        CurrentPlaceService.set = function(newPlace) {
+            currentPlace = newPlace;
+        };
+
+        CurrentPlaceService.get = function () {
+            return currentPlace;
+        };
+
+        return CurrentPlaceService;
+});

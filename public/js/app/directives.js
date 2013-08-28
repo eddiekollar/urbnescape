@@ -63,8 +63,8 @@ angular.module('urbnEscape.directives', []).
             };
 
              map.on('dblclick', function(e) {
-                 LocationData.lat = parseFloat(e.latlng.lat).toFixed(5);
-                 LocationData.lon = parseFloat(e.latlng.lng).toFixed(5);
+                 scope[attrs.ngModel].lat = parseFloat(e.latlng.lat).toFixed(5);
+                 scope[attrs.ngModel].lon = parseFloat(e.latlng.lng).toFixed(5);
                      // e is an event object (MouseEvent in this case)
                  var url = GetServiceUrl(e.latlng);
                  GetData(url);
