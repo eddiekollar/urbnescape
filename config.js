@@ -6,7 +6,7 @@ module.exports = {
         FAILURE_REDIRECT_URL: '/login'
     },
     db: {
-        production: "mongodb://user:pass@example.com:1234/sapling-prod",
+        production: "mongodb://urbnescape_user:Urbn3$4p3!@ds063307.mongolab.com:63307/urbnescape",
         development: "mongodb://localhost/urbnescape",
         test: "mongodb://localhost/urbnescape"
     },
