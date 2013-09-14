@@ -1,8 +1,8 @@
 <div class="container" ng-controller="PlacesCtrl" class="add-place-form">
     <h1>{{ category }}S</h1>
     <div>
-        <div class="pull-right addplace-btn">
-            <a class="btn btn-warning" href="#/addPlaceView">
+        <div class="pull-right addplace-btn" ng-show="authenticated">
+            <a class="btn btn-warning" ng-click="addPlacePage()">
                     KNOW OF OTHER PLACES?
                     <span class="glyphicon glyphicon-plus-sign"></span>
             </a>
@@ -15,10 +15,6 @@
                 {{ place.lat }}
                 {{ place.lon }}
                 {{ place.category }}
-
-                {{ place.quietlevel }}
-                {{ place.crowd }}
-                {{ place.tips }}
             </div>
         </div>
     </div>

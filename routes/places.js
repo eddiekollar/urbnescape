@@ -8,7 +8,8 @@
 
 var fs = require('fs')
     , path = require('path')
-    , Place = require('../models/place.js');
+    , Place = require('../models/place.js')
+    , Review = require('../models/review.js')
 
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -17,10 +18,11 @@ exports.findById = function(req, res) {
 };
 
 exports.findByCategory = function(req, res) {
-    var category = req.query.category;
+    console.log(req.session);
+    var category = req.params.category;
     console.log('Retrieving places by category: ' + category);
 
-    var query = Place.find({category: category});
+    var query = Place.find({category: new RegExp(category, 'i')});
 
     query.exec(function (err, places) {
         if (err) console.log(err);
@@ -42,27 +44,22 @@ exports.findAll = function(req, res) {
 };
 
 exports.addPlace = function(req, res) {
-    var place = req.body;
+    var place = req.body.place;
+    var review = req.body.review;
 
-    new Place(place).save(function (err) {
+    new Place(place).save(function (err, p) {
         if (err){
-            console.log('Error' + err)
+            res.send(400, err);
         }
 
-        console.log('Added place: ' + JSON.stringify(place));
-    });
-    /*
-    var outputFilename = path.dirname(__dirname) + '/data/places.json';
+        review.placeId = p.id;
+        new Review(review).save(function (err, r){
+            if (err){
+                res.send(400, err);
+            }
+        });
 
-    fs.appendFile(outputFilename, JSON.stringify(place, null, 4), function(err) {
-        if(err) {
-            console.log(err);
-            res.send(err);
-        } else {
-            console.log("JSON saved to " + outputFilename);
-            res.send(req.body);
-        }
+        res.send(201, p);
     });
-    */
 
 };

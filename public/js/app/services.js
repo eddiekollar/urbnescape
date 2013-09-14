@@ -47,4 +47,38 @@ angular.module('urbnEscape.services', []).
         };
 
         return CurrentPlaceService;
+}).factory('Session', function($http) {
+    var Session = {
+        data: {
+            authenticated: false
+        },
+        user: {
+            id: 0,
+            profile: {
+                name  : {
+                    last   : '',
+                    first  : ''
+                },
+                username: '',
+                email : ''
+            }
+        },
+        isAuthenticated: function() {
+            return this.data.authenticated;
+        },
+        saveSession: function() { /* save session data to db */ },
+        updateSession: function() {
+            /* load data from db */
+            //Session.data = $http.get('session.json').then(function(r) { return r.data;});
+        }
+    };
+    Session.updateSession();
+    return Session;
+}).factory('User', function($resource) {
+    return $resource('http://localhost\\:3000/user/:userId', {}, {
+        get: {method:'GET', params:{userId:'@userId'}},
+        post: {method:'POST', data: {}},
+        update: {method:'PUT', data: {}},
+        remove: {method:'DELETE'}
+    });
 });

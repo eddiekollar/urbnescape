@@ -1,0 +1,23 @@
+<div class="row" ng-controller="LogInCtrl">
+    <div class="col-offset-4 col-lg-4">
+        <div class="well">
+            <form role="form" ng-submit="logIn()">
+                <div class="heading">
+                    <h4 class="form-heading">Log In</h4>
+                </div>
+                <div ng-show="errorMessage != ''">
+                    <div class="alert alert-danger">{{ errorMessage }}</div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input class="form-control" type="text" id="username" ng-model="user.username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input class="form-control" type="password" id="password" ng-model="user.password">
+                </div>
+                <button type="submit" class="btn btn-success">Sign In</button>
+            </form>
+        </div>
+    </div>
+</div>

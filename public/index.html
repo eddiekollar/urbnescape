@@ -8,38 +8,31 @@
     <link rel="stylesheet" href="/public/css/ng.css">
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <!-- Latest compiled and minified CSS -->
+
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+    <!-- Optional theme
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"> -->
+    <!--
+    <link rel="stylesheet" href="/public/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/bower_components/bootstrap/dist/css/bootstrap-glyphicons.css">
+    <script src="/public/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/public/bower_components/jquery/jquery.min.js"></script> -->
 
     <!-- External library references -->
     <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container-narrow">
-        <div class="header" ng-controller="MainCtrl">
-            <ul class="nav nav-pills pull-right">
-                <li><div class="btn-group">
-                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                        Places <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" ng-click="setCategory('VIEW');">Views</a></li>
-                        <li><a href="#" ng-click="setCategory('PARK');">Parks</a></li>
-                        <li><a href="#" ng-click="setCategory('TRAIL');">Trails</a></li>
-                        <li><a href="#" ng-click="setCategory('LOUNGE');">Lounge</a></li>
-                    </ul>
-                </div></li>
-            </ul>
-            <h3 class="text-muted"><img src="/public/img/logo.png"> </h3>
-        </div>
 
-        <div ng-view ng-animate="{enter: 'view-enter', leave:'view-leave'}"></div>
-
-        <div class="footer">
-            <p>&copy; Urban Escape 2013</p>
-        </div>
+        <div ng-include data-src="'/public/includes/nav.html'"></div>
+        <div ng-view></div>
+        <div ng-include data-src="'/public/includes/footer.html'"></div>
     </div>
     <!-- AngularJS library and app code -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>

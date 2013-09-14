@@ -1,0 +1,31 @@
+<div class="header" ng-controller="MainCtrl">
+    <ul class="nav nav-pills pull-right">
+        <li><div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                Places <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" ng-click="setCategory('VIEW');">Views</a></li>
+                <li><a href="#" ng-click="setCategory('PARK');">Parks</a></li>
+                <li><a href="#" ng-click="setCategory('TRAIL');">Trails</a></li>
+                <li><a href="#" ng-click="setCategory('LOUNGE');">Lounge</a></li>
+            </ul>
+        </div></li>
+        <li>
+            <button ng-hide="authenticated" type="button" class="btn btn-default" ng-click="logInPage()">
+                Login
+            </button>
+            <button ng-hide="authenticated" type="button" class="btn btn-default" ng-click="signUpPage()">
+                Signup
+            </button>
+            <button ng-show="authenticated" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                {{ user.profile.username }} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <!-- <li><a href="#">Profile</a></li> -->
+                <li><a href="#" ng-click="logOut()">Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+    <h3 class="text-muted"><img src="/public/img/logo.png"> </h3>
+</div>

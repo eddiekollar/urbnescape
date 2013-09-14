@@ -43,42 +43,43 @@
                     <label class="control-label" for="quietlevel">Quiet Level</label>
                     <div class="">
                         <label class="radio-inline" for="quietlevel-0">
-                            <input type="radio" name="quietlevel" id="quietlevel-0" ng-model="place.quietlevel" value="1">
+                            <input type="radio" name="quietlevel" id="quietlevel-0" ng-model="review.quietlevel" value="1">
                             1
                         </label>
                         <label class="radio-inline" for="quietlevel-1">
-                            <input type="radio" name="quietlevel" id="quietlevel-1" ng-model="place.quietlevel" value="2">
+                            <input type="radio" name="quietlevel" id="quietlevel-1" ng-model="review.quietlevel" value="2">
                             2
                         </label>
                         <label class="radio-inline" for="quietlevel-2">
-                            <input type="radio" name="quietlevel" id="quietlevel-2" ng-model="place.quietlevel" value="3">
+                            <input type="radio" name="quietlevel" id="quietlevel-2" ng-model="review.quietlevel" value="3">
                             3
                         </label>
                         <label class="radio-inline" for="quietlevel-3">
-                            <input type="radio" name="quietlevel" id="quietlevel-3" ng-model="place.quietlevel" value="4">
+                            <input type="radio" name="quietlevel" id="quietlevel-3" ng-model="review.quietlevel" value="4">
                             4
                         </label>
                     </div>
                 </div>
 
                 <div class="control-group  col-lg-4">
-                    <img src="/public/bower_components/bootstrap/assets/glyphicons/png/glyphicons_043_group.png"/>
+                    <span class="glyphicon-group"></span>
+                    <img src="/public/img/glyphicons_group.png"/>
                     <label class="control-label" for="crowd">Crowd</label>
                     <div class="">
                         <label class="radio-inline" for="crowd-0">
-                            <input type="radio" name="crowd" id="crowd-0" ng-model="place.crowd" value="1" >
+                            <input type="radio" name="crowd" id="crowd-0" ng-model="review.crowd" value="1" >
                             1
                         </label>
                         <label class="radio-inline" for="crowd-1">
-                            <input type="radio" name="crowd" id="crowd-1" ng-model="place.crowd" value="2">
+                            <input type="radio" name="crowd" id="crowd-1" ng-model="review.crowd" value="2">
                             2
                         </label>
                         <label class="radio-inline" for="crowd-2">
-                            <input type="radio" name="crowd" id="crowd-2" ng-model="place.crowd" value="3">
+                            <input type="radio" name="crowd" id="crowd-2" ng-model="review.crowd" value="3">
                             3
                         </label>
                         <label class="radio-inline" for="crowd-3">
-                            <input type="radio" name="crowd" id="crowd-3" ng-model="place.crowd" value="4">
+                            <input type="radio" name="crowd" id="crowd-3" ng-model="review.crowd" value="4">
                             4
                         </label>
                     </div>
@@ -88,7 +89,7 @@
                 <div class="control-group tips-highlights-group col-lg-10 col-offset-1">
                     <span class="glyphicon glyphicon-map-marker"></span>
                     <label class="control-label" for="tips">Tips &amp; Highlights</label>
-                    <textarea id="tips" name="tips" rows="4" class="form-control" placeholder="Add some tips" ng-model="place.tips"></textarea>
+                    <textarea id="tips" name="tips" rows="4" class="form-control" placeholder="Add some tips" ng-model="review.tips"></textarea>
                 </div>
                 <div class="col-lg-2"></div>
 
@@ -96,7 +97,7 @@
                 <div class="control-group col-lg-2 col-offset-3">
                     <label class="control-label" for="addplace"></label>
                     <div class="controls">
-                        <button id="addplace" name="addplace" class="btn btn-warning" ng-click="saveData(place)">ADD A {{ $parent.place.category | uppercase }}</button>
+                        <button id="addplace" name="addplace" class="btn btn-warning" ng-click="addPlace()">ADD A {{ $parent.place.category | uppercase }}</button>
                     </div>
                 </div>
             </div>

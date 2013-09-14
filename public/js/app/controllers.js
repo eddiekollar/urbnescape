@@ -3,26 +3,80 @@
 /* Controllers */
 
 angular.module('urbnEscape.controllers', []).
-  controller('MainCtrl', ['$scope', '$location', 'CurrentCategory', function($scope, $location, CurrentCategory){
+  controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentCategory', function($rootScope, $scope, $http, $location, CurrentCategory){
     $scope.category = CurrentCategory.name;
 
     $scope.setCategory = function(newCategory) {
         CurrentCategory.name = newCategory;
         $location.path('/placesView');
     };
+
+    $scope.logInPage = function(){
+        $location.path('/logIn');
+    };
+
+    $scope.signUpPage = function(){
+        $location.path('/signUp');
+    };
+
+    $scope.logOut = function(){
+        console.log("Logging out");
+        $http.get('/-/auth/logout')
+            .success(function(user){
+                $rootScope.user = null;
+                $rootScope.authenticated = false;
+                $location.path('/placesView');
+            }).error(function(error) {
+                $scope.errorMessage = error.message;
+            });
+    };
   }])
-  .controller('AddPlaceCtrl', ['$scope', '$http', '$location', 'LocationData', 'CurrentCategory', function($scope, $http, $location, LocationData, CurrentCategory) {
+  .controller('LogInCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+    $scope.errorMessage = '';
+
+    $scope.logIn = function(){
+        console.log("Logging in:" + $scope.user);
+        $http.post('/-/auth/login', $scope.user)
+            .success(function(user){
+                $rootScope.user = user;
+                $rootScope.authenticated = true;
+                $location.path('/placesView');
+            }).error(function(error) {
+                $scope.errorMessage = error.message;
+            });
+    };
+
+    $scope.facebookLogIn = function() {
+
+    };
+
+    }])
+  .controller('SignUpCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+    $scope.signUp = function(){
+        console.log("Signing up:" + $scope.user);
+        $http.post('/-/api/v1/user', $scope.user)
+            .success(function(user){
+                $rootScope.user = user;
+                $rootScope.authenticated = true;
+                $location.path('/placesView');
+            }).error(function(error) {
+                $scope.errorMessage = error.message;
+            });
+    };
+    }])
+  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'LocationData', 'CurrentCategory', function($rootScope, $scope, $http, $location, LocationData, CurrentCategory) {
     //Initialize form data
+    if(!$rootScope.authenticated){
+        $location.path('/placesView');
+    }
+    
     LocationData = {
         name: '',
         location: '',
         lat: 0,
         lon: 0,
         category: '',
-        description: '',
-        quietlevel: 1,
-        crowd: 1,
-        tips: ''
+        description: ''
     };
     $scope.place = LocationData;
 
@@ -32,35 +86,40 @@ angular.module('urbnEscape.controllers', []).
 
     $scope.activate = function(category){
         $scope.place.category = category;
-        console.log($scope.place.category);
     };
 
-    $scope.saveData = function(place){
+    $scope.addPlace = function(){
         console.log('Saving data!');
 
-        $http.post('/places', place).
+        $scope.place.userId = $rootScope.user.id;
+        $scope.review.userId = $rootScope.user.id;;
+
+        $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
             success(function(data) {
-                console.log('Successfully saved!');
-        });
+
+        }).error(function(error) {
+                $scope.errorMessage = error.message;
+            });
 
         $location.path('/placesView');
     };
   }])
-  .controller('PlacesCtrl', ['$scope', '$http', '$location' ,'CurrentCategory', 'CurrentPlaceService' , function($scope, $http, $location, CurrentCategory, CurrentPlaceService) {
+  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'CurrentCategory', 'CurrentPlaceService' , function($rootScope, $scope, $http, $location, CurrentCategory, CurrentPlaceService) {
     //Get data from server to list out places
     $scope.category = CurrentCategory.name;
 
-    $http({url: '/placeslist',
-        method: "GET",
-        params: {category : $scope.category}
-    }).success(function(data){
+    $http.get('/-/api/v1/places/category/'+$scope.category.toLowerCase())
+        .success(function(data){
             $scope.places = data;
     });
 
     $scope.getDetails = function(place) {
-        console.log(JSON.stringify(place));
         CurrentPlaceService.set(place);
         $location.path('/placeDetailsView');
+    };
+
+    $scope.addPlacePage = function(){
+        $location.path('/addPlaceView');
     };
     /*
     $http.get('/placeslist', {category : $scope.category}).
