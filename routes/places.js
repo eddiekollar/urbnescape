@@ -20,26 +20,21 @@ exports.findById = function(req, res) {
 exports.findByCategory = function(req, res) {
     console.log(req.session);
     var category = req.params.category;
-    console.log('Retrieving places by category: ' + category);
-
     var query = Place.find({category: new RegExp(category, 'i')});
 
     query.exec(function (err, places) {
         if (err) console.log(err);
         res.send(places);
-        console.log('Number of places found: ', places.length);
     });
 };
 
 exports.findAll = function(req, res) {
-    console.log('Retrieving all places.');
     //return all places
     var query = Place.find({});
 
     query.exec(function (err, places) {
         if (err) console.log(err);
         res.send(places);
-        console.log('Number of places found: %i', places.length);
     });
 };
 
