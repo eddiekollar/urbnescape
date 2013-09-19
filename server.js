@@ -83,6 +83,8 @@ app.get(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.read);
 app.put(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.update);
 app.delete(API_BASE_URL + '/users/:userId', ensureAuthenticated, user.delete);
 
+app.post(API_BASE_URL + '/check/:uniqueField', user.unique);
+
 
 //TODO: Fix places calls
 app.get(API_BASE_URL + '/places', places.findAll);

@@ -1,30 +1,126 @@
 <div class="container" ng-controller="SignUpCtrl">
     <div class="col-offset-4 col-sm-5 well">
-        <form role="form" ng-submit="signUp()">
+        <form role="form" name="signup_form" ng-submit="signUp()">
             <div class="heading">
                 <h4 class="form-heading">Sign Up</h4>
             </div>
             <div class="form-group">
-                <label for="name.first">First Name</label>
-                <input  class="form-control" type="text" id="name.first" placeholder="E.g. Ashwin" ng-model="user.name.first">
+                <label for="first_name">First Name</label>
+                <input  class="form-control"
+                        placeholder="First Name"
+                        type="text"
+                        name="first_name"
+                        ng-model="user.name.first"
+                        ng-minlength="2"
+                        ng-maxlength="30"
+                        required
+                        ng-focus/>
+                <div class="alert alert-danger"
+                     ng-show="signup_form.first_name.$dirty && signup_form.first_name.$invalid && !signup_form.first_name.$focused">
+                    <small class="error"
+                           ng-show="signup_form.first_name.$error.required">
+                        Your first name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.first_name.$error.minlength">
+                        Your first name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.first_name.$error.maxlength">
+                        Your first name cannot be longer than 30 characters
+                    </small>
+                </div>
             </div>
             <div class="form-group">
-                <label for="name.last">Last Name</label>
-                <input class="form-control" type="text" id="name.last" placeholder="E.g. Hegde" ng-model="user.name.last">
+                <label for="last_name">Last Name</label>
+                <input class="form-control"
+                       type="text"
+                       placeholder="Last Name"
+                       id="last_name"
+                       name="last_name"
+                       ng-model="user.name.last"
+                       ng-minlength="2"
+                       ng-maxlength="30"
+                       required
+                       ng-focus>
+                <div class="alert alert-danger"
+                     ng-show="signup_form.last_name.$dirty && signup_form.last_name.$invalid && !signup_form.last_name.$focused">
+                    <small class="error"
+                           ng-show="signup_form.last_name.$error.required">
+                        Your last name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.last_name.$error.minlength">
+                        Your last name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.last_name.$error.maxlength">
+                        Your last name cannot be longer than 30 characters
+                    </small>
+                </div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input class="form-control" type="text" id="email" placeholder="E.g. ashwinh@cybage.com" ng-model="user.email">
+                <input class="form-control"
+                       type="email"
+                       placeholder="Email"
+                       id="email"
+                       name="email"
+                       ng-model="user.email"
+                       required
+                       ng-focus
+                       ensure-unique="email">
+                <div class="alert alert-danger"
+                     ng-show="signup_form.email.$dirty && signup_form.email.$invalid">
+                    <small class="error"
+                           ng-show="signup_form.email.$invalid && !signup_form.email.$error.unique">
+                        Please enter a valid email.
+                    </small>
+                    <small class="error" ng-show="signup_form.email.$error.unique">An account with this email address already exists</small>
+                </div>
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
-                <input class="form-control" type="text" id="username" placeholder="E.g. ashwinhegde" ng-model="user.username">
+                <input class="form-control"
+                       type="text"
+                       id="username"
+                       name="username"
+                       ng-model="user.username"
+                       ng-minlength="2"
+                       ng-maxlength="30"
+                       required
+                       ngFocus
+                       ensure-unique="username">
+                <div class="alert alert-danger"
+                     ng-show="signup_form.username.$dirty && signup_form.username.$invalid">
+                    <small class="error"
+                           ng-show="signup_form.username.$error.required">
+                        User name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.username.$error.minlength">
+                        Your user name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="signup_form.username.$error.maxlength">
+                        Your user name cannot be longer than 30 characters
+                    </small>
+                    <small class="error" ng-show="signup_form.username.$error.unique">That username is taken, please try another</small>
+                </div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input class="form-control" type="password" id="password" ng-model="user.password">
+                <input class="form-control"
+                       type="password"
+                       id="password"
+                       name="password"
+                       ng-minlength="5"
+                       ng-maxlength="30"
+                       ng-model="user.password"
+                       required
+                       ng-focus>
             </div>
-            <button type="submit" class="btn btn-success">Sign Up</button>
+            <button type="submit" class="btn btn-success" ng-disabled="signup_form.$invalid">Sign Up</button>
         </form>
     </div>
 </div>

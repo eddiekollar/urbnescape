@@ -10,6 +10,7 @@ angular.module('urbnEscape.directives', []).
         replace: true,
         template: '<div></div>',
         link: function(scope, element, attrs) {
+            var marker = L.marker();
             var map = L.map('map');
             map.doubleClickZoom.disable();
 
@@ -62,23 +63,25 @@ angular.module('urbnEscape.directives', []).
                 }.bind(this));
             };
 
-             map.on('dblclick', function(e) {
-                 scope[attrs.ngModel].lat = parseFloat(e.latlng.lat).toFixed(5);
-                 scope[attrs.ngModel].lon = parseFloat(e.latlng.lng).toFixed(5);
-                     // e is an event object (MouseEvent in this case)
-                 var url = GetServiceUrl(e.latlng);
-                 GetData(url);
-             });
-
             function onLocationFound(e) {
                 var radius = e.accuracy / 2;
 
-                L.marker(e.latlng).addTo(map);
+                marker = L.marker(e.latlng).addTo(map);
             }
 
             function onLocationError(e) {
                 alert(e.message);
             }
+
+            map.on('dblclick', function(e) {
+                marker.setLatLng(e.latlng);
+                scope[attrs.ngModel].lat = parseFloat(e.latlng.lat).toFixed(5);
+                scope[attrs.ngModel].lon = parseFloat(e.latlng.lng).toFixed(5);
+
+                // e is an event object (MouseEvent in this case)
+                var url = GetServiceUrl(e.latlng);
+                GetData(url);
+            });
 
             map.on('locationfound', onLocationFound);
             map.on('locationerror', onLocationError);
@@ -86,4 +89,44 @@ angular.module('urbnEscape.directives', []).
             map.locate({setView: true, maxZoom: 14});
         }
     };
-  }]);
+  }])
+  .directive('ngFocus', [function() {
+    var FOCUS_CLASS = "ng-focused";
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attrs, ctrl) {
+            ctrl.$focused = false;
+            element.bind('focus', function(evt) {
+                element.addClass(FOCUS_CLASS);
+                scope.$apply(function() {ctrl.$focused = true;});
+            }).bind('blur', function(evt) {
+                    element.removeClass(FOCUS_CLASS);
+                    scope.$apply(function() {ctrl.$focused = false;});
+                });
+        }
+    }
+}])
+    .directive('ensureUnique', ['$http', '$timeout', function($http, $timeout) {
+    var checking = null;
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attrs, c) {
+            scope.$watch(attrs.ngModel, function(newVal) {
+                if (!checking) {
+                    console.log(ele[0].value);
+                    checking = $timeout(function() {
+                        $http.post('/-/api/v1/check/' + attrs.ensureUnique, {'field': ele[0].value})
+                        .success(function(data, status, headers, cfg) {
+                                console.log(data);
+                                c.$setValidity('unique', (data == 'true'));
+                                checking = null;
+                            }).error(function(data, status, headers, cfg) {
+                                checking = null;
+                            });
+                    }, 500);
+                }
+            });
+        }
+    }
+}]);

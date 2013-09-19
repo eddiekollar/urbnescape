@@ -82,7 +82,7 @@ angular.module('urbnEscape.controllers', []).
 
     $scope.place.category = CurrentCategory.name;
 
-    $scope.categories = ['VIEW', 'PARK', 'TRAIL', 'LOUNGE'];
+    $scope.categories = ['VIEW', 'PARK', 'TRAIL', 'SOLITUDE'];
 
     $scope.activate = function(category){
         $scope.place.category = category;
@@ -92,7 +92,7 @@ angular.module('urbnEscape.controllers', []).
         console.log('Saving data!');
 
         $scope.place.userId = $rootScope.user.id;
-        $scope.review.userId = $rootScope.user.id;;
+        $scope.review.userId = $rootScope.user.id;
 
         $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
             success(function(data) {

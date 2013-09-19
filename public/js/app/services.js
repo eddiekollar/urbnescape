@@ -13,10 +13,7 @@ angular.module('urbnEscape.services', []).
             lat: 0,
             lon: 0,
             category: '',
-            description: '',
-            quietlevel: 1,
-            crowd: 1,
-            tips: ''
+            description: ''
         };
   })
   .factory('CurrentCategory', function() {
@@ -32,10 +29,7 @@ angular.module('urbnEscape.services', []).
             lat: 0,
             lon: 0,
             category: '',
-            description: '',
-            quietlevel: 1,
-            crowd: 1,
-            tips: ''
+            description: ''
         };
 
         CurrentPlaceService.set = function(newPlace) {

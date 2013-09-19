@@ -44,6 +44,8 @@ userSchema.path('createdAt')
 userSchema.statics.createFromProfile = function (p, fn) {
     var u = new User();
     delete p.password;
+    p.username = p.username.toLowerCase();
+    p.email = p.email.toLowerCase();
     console.log(p);
     u.profile = p;
     u.save(fn);
@@ -80,7 +82,7 @@ userSchema.statics.setPassword = function(userId, passwordRaw, fn) {
 };
 
 userSchema.statics.findByEmail = function (address, fn) {
-    User.findOne({'profile.emails': address}, fn);
+    User.findOne({'profile.email': address}, fn);
 };
 
 userSchema.statics.findByUsername = function (username, fn) {

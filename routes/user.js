@@ -17,16 +17,19 @@ exports.create = function (req, res) {
     var password = req.body.password;
     user.User.createFromProfile(req.body, function (err, u) {
         if (err) {
+            console.log(err);
             return res.send(400, err);
         }
 
         user.User.setPassword(u.id, password, function(err, u) {
              if (err) {
+                 console.log(err);
                 return res.send(400, err);
              }
 
              req.logIn(u,function(err){
                  if (err) {
+                     console.log(err);
                      res.send(400,err);
                  }
              });
@@ -83,4 +86,37 @@ exports.current = function (req, res) {
         // send the found user back to the client
         return res.send(u.getProfile() || {});
     });
+};
+
+exports.unique = function (req,res) {
+    if(req.params.uniqueField == 'username'){
+        user.User.findOne({'profile.username' : req.body.field.toLowerCase()}, function(err, u){
+            if(err) {
+                console.log(err);
+                return res.send(401, err);
+            }
+            if(!u) {
+                return res.send(true);
+            }
+            if(u) {
+                console.log(u.id);
+                return res.send(false);
+            }
+        });
+    }else if(req.params.uniqueField == 'email'){
+        user.User.findOne({'profile.email' : req.body.field.toLowerCase()}, function(err, u){
+            if(err) {
+                console.log(err);
+                return res.send(401, err);
+            }
+            if(!u) {
+                console.log(req.params.uniqueField + ': ' + req.body.field.toLowerCase());
+                return res.send(true);
+            }
+            if(u) {
+                console.log(u.id);
+                return res.send(false);
+            }
+        });
+    }
 };
