@@ -4,7 +4,7 @@
 
 
 angular.module('urbnEscape.directives', []).
-  directive('sap', ['LocationData', function(LocationData) {
+  directive('sap', [function() {
     return {
         restrict: 'E',
         replace: true,
@@ -38,7 +38,7 @@ angular.module('urbnEscape.directives', []).
             });
             */
 
-            function GetServiceUrl(latlng) {
+            var GetServiceUrl = function(latlng) {
                 var parameters = L.Util.extend({
                     format: 'json',
                     lat: latlng.lat,
@@ -51,11 +51,12 @@ angular.module('urbnEscape.directives', []).
                     + L.Util.getParamString(parameters);
             };
 
-            function GetData(url) {
+            var GetData = function (url) {
                 $.getJSON(url, function (data) {
                     try {
                         //var results = provider.ParseJSON(data);
                         $('#location').val(data.address.road + " " + data.address.city + ", " + data.address.state);
+                        scope[attrs.ngModel].location = data.address.road + " " + data.address.city + ", " + data.address.state;
                     }
                     catch (error) {
                         alert(error);

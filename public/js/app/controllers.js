@@ -20,7 +20,6 @@ angular.module('urbnEscape.controllers', []).
     };
 
     $scope.logOut = function(){
-        console.log("Logging out");
         $http.get('/-/auth/logout')
             .success(function(user){
                 $rootScope.user = null;
@@ -35,7 +34,6 @@ angular.module('urbnEscape.controllers', []).
     $scope.errorMessage = '';
 
     $scope.logIn = function(){
-        console.log("Logging in:" + $scope.user);
         $http.post('/-/auth/login', $scope.user)
             .success(function(user){
                 $rootScope.user = user;
@@ -53,7 +51,6 @@ angular.module('urbnEscape.controllers', []).
     }])
   .controller('SignUpCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     $scope.signUp = function(){
-        console.log("Signing up:" + $scope.user);
         $http.post('/-/api/v1/user', $scope.user)
             .success(function(user){
                 $rootScope.user = user;
@@ -64,23 +61,15 @@ angular.module('urbnEscape.controllers', []).
             });
     };
     }])
-  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'LocationData', 'CurrentCategory', function($rootScope, $scope, $http, $location, LocationData, CurrentCategory) {
+  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentCategory', function($rootScope, $scope, $http, $location, CurrentCategory) {
     //Initialize form data
     if(!$rootScope.authenticated){
         $location.path('/placesView');
     }
-    
-    LocationData = {
-        name: '',
-        location: '',
-        lat: 0,
-        lon: 0,
-        category: '',
-        description: ''
-    };
-    $scope.place = LocationData;
 
+    $scope.place = {};
     $scope.place.category = CurrentCategory.name;
+    $scope.review = {quietlevel:1, crowd: 1};
 
     $scope.categories = ['VIEW', 'PARK', 'TRAIL', 'SOLITUDE'];
 
@@ -89,8 +78,6 @@ angular.module('urbnEscape.controllers', []).
     };
 
     $scope.addPlace = function(){
-        console.log('Saving data!');
-
         $scope.place.userId = $rootScope.user.id;
         $scope.review.userId = $rootScope.user.id;
 
