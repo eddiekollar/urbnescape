@@ -8,7 +8,8 @@ var express     = require('express')
     , auth      = require('./routes/auth')
     , user      = require('./routes/user')
     , session   = require('./routes/session')
-    , places    = require('./routes/places');
+    , places    = require('./routes/places')
+    , review    = require('./routes/review');
 
 var API_BASE_URL = '/-/api/v1';
 var AUTH_URL = '/-/auth';
@@ -81,7 +82,7 @@ app.post(API_BASE_URL + '/user', user.create);
 app.get(API_BASE_URL + '/user/me', user.current);
 app.get(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.read);
 app.put(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.update);
-app.delete(API_BASE_URL + '/users/:userId', ensureAuthenticated, user.delete);
+app.delete(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.delete);
 
 app.post(API_BASE_URL + '/check/:uniqueField', user.unique);
 
@@ -93,11 +94,12 @@ app.get(API_BASE_URL + '/places/category/:category', places.findByCategory);
 
 app.post(API_BASE_URL + '/places', places.addPlace);
 
+
+//API calls for reviews
+app.get(API_BASE_URL + '/reviews/:placeId', review.findByPlaceId);
 /*
-//API calls for tips
- app.get(API_BASE_URL + '/tips/:userId', tips.findByUserId);
- app.get(API_BASE_URL + '/tips/:tipId', tips.read);
- app.get(API_BASE_URL + '/tips/:placeId', tips.findByPlaceId);
+ app.get(API_BASE_URL + '/reviews/:userId', reviews.findByUserId);
+ app.get(API_BASE_URL + '/reviews/:tipId', tips.read);
 
  app.post(API_BASE_URL + '/tips', ensureAuthenticated, tips.create);
  app.put(API_BASE_URL + '/tips/:tipId', ensureAuthenticated, tips.update);

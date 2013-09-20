@@ -5,6 +5,30 @@
     <div class="well col-12" ng-controller="PlaceDetailsCtrl" ng-model="place">
         <p class="col-offset-3">{{ place.name }}</p>
         <p class="col-offset-3">{{ place.location }}</p>
-        {{ place.description }}
+        <p class="col-offset-3">{{ place.description }}</p>
+    </div>
+    <div ng-repeat="review in reviews">
+        <div class="well col-12">
+            <div class="col-lg-5 col-offset-1">
+                Quiet Level: {{ review.quietlevel }}
+            </div>
+
+            <div class="control-group  col-lg-4">
+                <span class="glyphicon-group"></span>
+                <img src="/public/img/glyphicons_group.png"/>
+                Crowd: {{ review.crowd }}
+            </div>
+
+            <div class="col-lg-10 col-offset-1">
+                <span class="glyphicon glyphicon-map-marker"></span>
+                Tips &amp; Highlights: <br>
+                <textarea id="tips"
+                          name="tips"
+                          rows="4"
+                          cols="80"
+                          ng-disabled="true"
+                          >{{ review.tips }}</textarea>
+            </div>
+        </div>
     </div>
 </div>

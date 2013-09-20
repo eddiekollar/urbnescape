@@ -117,6 +117,13 @@ angular.module('urbnEscape.controllers', []).
   }])
   .controller('PlaceDetailsCtrl', ['$scope', '$http', '$location', 'CurrentPlaceService', function($scope, $http, $location, CurrentPlaceService) {
     $scope.place = CurrentPlaceService.get();
+
+    console.log($scope.place.id);
+
+    $http.get('/-/api/v1/reviews/'+$scope.place._id)
+        .success(function(data){
+            $scope.reviews = data;
+        });
   }])
   .controller('MapCtrl', ['$scope', '$http', 'CurrentPlaceService', function($scope, $http, CurrentPlaceService) {
     $scope.place = CurrentPlaceService.get();

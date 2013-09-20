@@ -81,5 +81,5 @@ a, p{
     padding-bottom: 15px;
 }
 
-textarea, input.ng-dirty.ng-valid { border:1px solid Green; }
-textarea, input.ng-dirty.ng-invalid { border:1px solid Red; }
+textarea.ng-dirty.ng-valid, input.ng-dirty.ng-valid { border:1px solid Green; }
+textarea.ng-dirty.ng-invalid, input.ng-dirty.ng-invalid { border:1px solid Red; }

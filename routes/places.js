@@ -9,7 +9,7 @@
 var fs = require('fs')
     , path = require('path')
     , Place = require('../models/place.js')
-    , Review = require('../models/review.js')
+    , Review = require('../models/review.js');
 
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -18,7 +18,6 @@ exports.findById = function(req, res) {
 };
 
 exports.findByCategory = function(req, res) {
-    console.log(req.session);
     var category = req.params.category;
     var query = Place.find({category: new RegExp(category, 'i')});
 
