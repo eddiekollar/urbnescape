@@ -9,6 +9,10 @@
     </div>
     <div ng-repeat="review in reviews">
         <div class="well col-12">
+            <div class="col-lg-11 col-offset-1">
+                <span class="glyphicon glyphicon-user"></span>
+                {{ review.createdBy.profile.username }}
+            </div>
             <div class="col-lg-5 col-offset-1">
                 Quiet Level: {{ review.quietlevel }}
             </div>

@@ -29,6 +29,8 @@ var userSchema = new Schema({
         },
         passwordHash: String
     },
+    reviews:    [{type: Schema.Types.ObjectId, ref: 'Review'}],
+    favorites:    [{type: Schema.Types.ObjectId, ref: 'Place'}],
     createdAt: Date
 });
 

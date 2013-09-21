@@ -9,7 +9,7 @@ var express     = require('express')
     , user      = require('./routes/user')
     , session   = require('./routes/session')
     , places    = require('./routes/places')
-    , review    = require('./routes/review');
+    , review    = require('./routes/reviews');
 
 var API_BASE_URL = '/-/api/v1';
 var AUTH_URL = '/-/auth';

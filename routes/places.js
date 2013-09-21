@@ -29,7 +29,7 @@ exports.findByCategory = function(req, res) {
 
 exports.findAll = function(req, res) {
     //return all places
-    var query = Place.find({});
+    var query = Place.find({}).select('-reviews');
 
     query.exec(function (err, places) {
         if (err) console.log(err);
@@ -51,6 +51,16 @@ exports.addPlace = function(req, res) {
             if (err){
                 res.send(400, err);
             }
+            console.log(r);
+            p.reviews.push(r.id);
+            p.save();
+            //find user and save review id
+            /*
+            user.Users.findById(r.createdBy, function(err,u){
+            * u.reviews.push(r.id);
+            * u.save();
+            * });
+            * */
         });
 
         res.send(201, p);

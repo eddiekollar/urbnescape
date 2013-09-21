@@ -8,9 +8,9 @@ var reviewSchema = new Schema({
     quietlevel:     { type: Number, default: 1},
     crowd:          { type: Number, default: 1},
     tips:           { type: String, default: ''},
-    createdDate:    { type: Date, default: Date.now},
-    placeId :       { type: Schema.ObjectId, unique: true, required: true },
-    userId :        { type: Schema.ObjectId, unique: true, required: true }
+    placeId:          { type: Schema.Types.ObjectId, ref: 'Place'},
+    createdBy:      { type: Schema.Types.ObjectId, ref: 'User'},
+    createdDate:    { type: Date, default: Date.now}
 });
 
 module.exports = Review = mongoose.model('Review', reviewSchema);

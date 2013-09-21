@@ -78,8 +78,8 @@ angular.module('urbnEscape.controllers', []).
     };
 
     $scope.addPlace = function(){
-        $scope.place.userId = $rootScope.user.id;
-        $scope.review.userId = $rootScope.user.id;
+        $scope.place.createdBy = $rootScope.user.id;
+        $scope.review.createdBy = $rootScope.user.id;
 
         $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
             success(function(data) {
@@ -123,6 +123,8 @@ angular.module('urbnEscape.controllers', []).
     $http.get('/-/api/v1/reviews/'+$scope.place._id)
         .success(function(data){
             $scope.reviews = data;
+        }).error(function(error) {
+            console.log(error);
         });
   }])
   .controller('MapCtrl', ['$scope', '$http', 'CurrentPlaceService', function($scope, $http, CurrentPlaceService) {

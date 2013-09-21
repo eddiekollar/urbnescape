@@ -9,11 +9,14 @@ exports.findById = function(req, res) {
 
 exports.findByPlaceId = function (req, res) {
     // get the user by the user id.
-    console.log(req.params.placeId);
-    Review.find({'placeId': req.params.placeId}, function (err, reviews) {
+    Review.find({'placeId': req.params.placeId})
+        .populate('createdBy', 'profile.username')
+        .exec(function(err, reviews) {
         if (err) {
+            console.log(err);
             return res.send(400, err);
         }
+        console.log(reviews);
         // send the found user back to the client
         return res.send(reviews);
     });
