@@ -115,8 +115,76 @@ angular.module('urbnEscape.controllers', []).
             console.log("Data received");
     }); */
   }])
-  .controller('PlaceDetailsCtrl', ['$scope', '$http', '$location', 'CurrentPlaceService', function($scope, $http, $location, CurrentPlaceService) {
+  .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentPlaceService', function($rootScope, $scope, $http, $location, CurrentPlaceService) {
+    $scope.originalObj = {};
     $scope.place = CurrentPlaceService.get();
+    $scope.needsReview = false;
+    $scope.hasReview = false;
+    $scope.editMode = false;
+
+    if($rootScope.authenticated){
+        $http.get('/-/api/v1/reviews/me/' + $scope.user.id + '/' + $scope.place._id)
+            .success(function(data){
+                $scope.myReview = data;
+                if(typeof data._id !== 'undefined'){
+                    $scope.originalObj = angular.copy(data);
+                    $scope.hasReview = true;
+                }
+            }).error(function(error) {
+                console.log(error);
+        });
+
+        $scope.setEditMode = function(){
+            $scope.editMode = !$scope.editMode;
+        };
+
+        $scope.createReview = function(){
+            $scope.myReview = {quietlevel:1, crowd: 1};
+            $scope.setEditMode();
+        };
+
+        $scope.cancel = function(){
+            console.log($scope.originalObj);
+            $scope.myReview = angular.copy($scope.originalObj);
+            $scope.setEditMode();
+        };
+
+        $scope.deleteMyReview = function(){
+            $http.delete('/-/api/v1/reviews/'+$scope.myReview._id)
+                .success(function(data){
+
+                }).error(function(error) {
+                    console.log(error);
+                });
+            $scope.myReview = {};
+            $scope.needsReview = false;
+            $scope.hasReview = false;
+        };
+
+        $scope.saveMyReview = function(){
+            $scope.myReview.createdBy = $rootScope.user.id;
+            if(!$scope.hasReview){
+                $scope.myReview.placeId= $scope.place._id;
+                $http.post('/-/api/v1/reviews', {review: $scope.myReview}).
+                    success(function(data) {
+                        $scope.hasReview = true;
+                        $scope.myReview = data;
+                        $scope.needsReview = false;
+                    }).error(function(error) {
+                        $scope.errorMessage = error.message;
+                    });
+            }else if(!angular.equals($scope.originalObj, $scope.myReview)){
+                $http.put('/-/api/v1/reviews/' + $scope.user.id, {review: $scope.myReview}).
+                    success(function(data) {
+                        $scope.myReview = data;
+                    }).error(function(error) {
+                        $scope.errorMessage = error.message;
+                        console.log(error);
+                    });
+            }
+            $scope.setEditMode();
+        };
+    }
 
     $http.get('/-/api/v1/reviews/'+$scope.place._id)
         .success(function(data){
@@ -126,6 +194,10 @@ angular.module('urbnEscape.controllers', []).
         });
   }])
   .controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+    if(!$rootScope.authenticated){
+        $location.path('/placesView');
+    }
+
     $scope.originalObj = {};
     $scope.editMode = false;
     $scope.profile = {};
@@ -152,6 +224,7 @@ angular.module('urbnEscape.controllers', []).
         if(!angular.equals($scope.profile, $scope.originalObj)){
             $http.put('/-/api/v1/user/' + $scope.user.id, {user: $scope.profile}).
             success(function(data) {
+                $rootScope.user = data.username;
                 console.log(data);
             }).error(function(error) {
                 $scope.errorMessage = error.message;

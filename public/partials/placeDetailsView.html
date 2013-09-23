@@ -7,8 +7,135 @@
         <p class="col-offset-3">{{ place.location }}</p>
         <p class="col-offset-3">{{ place.description }}</p>
     </div>
-    <div ng-repeat="review in reviews">
+    <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">
+        <a class="btn btn-warning" ng-click="createReview()">
+            ADD TIP
+            <span class="glyphicon glyphicon-plus-sign"></span>
+        </a>
+    </div>
+    <div ng-show="authenticated && editMode">
+        <form role="form" name="addreview_form" class="form-inline">
+            <div class="well col-12">
+                <div class="input-group col-lg-5 col-offset-1">
+                    <label class="control-label" for="quietlevel">Quiet Level</label>
+                    <div class="">
+                        <label class="radio-inline" for="quietlevel-0">
+                            <input type="radio" name="quietlevel" id="quietlevel-0" ng-model="myReview.quietlevel" value="1">
+                            1
+                        </label>
+                        <label class="radio-inline" for="quietlevel-1">
+                            <input type="radio" name="quietlevel" id="quietlevel-1" ng-model="myReview.quietlevel" value="2">
+                            2
+                        </label>
+                        <label class="radio-inline" for="quietlevel-2">
+                            <input type="radio" name="quietlevel" id="quietlevel-2" ng-model="myReview.quietlevel" value="3">
+                            3
+                        </label>
+                        <label class="radio-inline" for="quietlevel-3">
+                            <input type="radio" name="quietlevel" id="quietlevel-3" ng-model="myReview.quietlevel" value="4">
+                            4
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group  col-lg-4">
+                    <span class="glyphicon-group"></span>
+                    <img src="/public/img/glyphicons_group.png"/>
+                    <label class="control-label" for="crowd">Crowd</label>
+                    <div class="">
+                        <label class="radio-inline" for="crowd-0">
+                            <input type="radio" name="crowd" id="crowd-0" ng-model="myReview.crowd" value="1" >
+                            1
+                        </label>
+                        <label class="radio-inline" for="crowd-1">
+                            <input type="radio" name="crowd" id="crowd-1" ng-model="myReview.crowd" value="2">
+                            2
+                        </label>
+                        <label class="radio-inline" for="crowd-2">
+                            <input type="radio" name="crowd" id="crowd-2" ng-model="myReview.crowd" value="3">
+                            3
+                        </label>
+                        <label class="radio-inline" for="crowd-3">
+                            <input type="radio" name="crowd" id="crowd-3" ng-model="myReview.crowd" value="4">
+                            4
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+
+                <div class="control-group tips-highlights-group col-lg-10 col-offset-1">
+                    <span class="glyphicon glyphicon-map-marker"></span>
+                    <label class="control-label" for="tips">Tips &amp; Highlights</label>
+                    <textarea id="tips"
+                              name="tips"
+                              rows="4"
+                              class="form-control"
+                              placeholder="Add some tips"
+                              ng-model="myReview.tips"
+                              ng-minlength="2"
+                              ng-maxlength="512"
+                              ng-focus
+                              required></textarea>
+                    <div class="alert alert-danger"
+                         ng-show="addreview_form.tips.$dirty && addreview_form.tips.$invalid && !addreview_form.tips.$focused">
+                        <small class="error"
+                               ng-show="addreview_form.tips.$error.required">
+                            Tip is required.
+                        </small>
+                        <small class="error"
+                               ng-show="addreview_form.tips.$error.minlength">
+                            Tip is required to be at least 2 characters
+                        </small>
+                        <small class="error"
+                               ng-show="addreview_form.tips.$error.maxlength">
+                            Tip cannot be longer than 512 characters
+                        </small>
+                    </div>
+                    <div class="col-lg-2"></div>
+                </div>
+                <br>
+                <div class="col-offset-1 col-10">
+                    <button type="submit" class="btn btn-success" ng-disabled="addreview_form.$invalid" ng-show="editMode" ng-click="saveMyReview()">Save</button>
+                    <button class="btn btn-default" ng-show="editMode" ng-click="cancel()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div ng-show="authenticated && hasReview && !editMode">
         <div class="well col-12">
+            <div class="col-lg-11 col-offset-1">
+                <span class="glyphicon glyphicon-user"></span>
+                {{ user.profile.username }}
+            </div>
+            <div class="col-lg-5 col-offset-1">
+                Quiet Level: {{ myReview.quietlevel }}
+            </div>
+
+            <div class="control-group  col-lg-4">
+                <span class="glyphicon-group"></span>
+                <img src="/public/img/glyphicons_group.png"/>
+                Crowd: {{ myReview.crowd }}
+            </div>
+
+            <div class="col-lg-10 col-offset-1">
+                <span class="glyphicon glyphicon-map-marker"></span>
+                Tips &amp; Highlights: <br>
+                <textarea id="mytips"
+                          name="mytips"
+                          rows="4"
+                          cols="80"
+                          ng-disabled="true"
+                        >{{ myReview.tips }}</textarea>
+            </div>
+
+            <div class="col-offset-1 col-10">
+                <button class="btn btn-success" ng-hide="editMode" ng-click="setEditMode()">Edit</button>
+                <button class="btn btn-danger" ng-hide="editMode" ng-click="deleteMyReview()">Delete</button>
+            </div>
+        </div>
+    </div>
+    <div ng-repeat="review in reviews">
+        <div class="well col-12" ng-hide="review._id == myReview._id">
             <div class="col-lg-11 col-offset-1">
                 <span class="glyphicon glyphicon-user"></span>
                 {{ review.createdBy.profile.username }}
@@ -26,8 +153,8 @@
             <div class="col-lg-10 col-offset-1">
                 <span class="glyphicon glyphicon-map-marker"></span>
                 Tips &amp; Highlights: <br>
-                <textarea id="tips"
-                          name="tips"
+                <textarea id="usertips"
+                          name="usertips"
                           rows="4"
                           cols="80"
                           ng-disabled="true"

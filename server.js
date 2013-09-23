@@ -91,26 +91,26 @@ app.post(API_BASE_URL + '/check/:uniqueField', user.unique);
 app.get(API_BASE_URL + '/places', places.findAll);
 app.get(API_BASE_URL + '/places/:placeId', places.findById);
 app.get(API_BASE_URL + '/places/category/:category', places.findByCategory);
-
 app.post(API_BASE_URL + '/places', places.addPlace);
 
 
 //API calls for reviews
 app.get(API_BASE_URL + '/reviews/:placeId', review.findByPlaceId);
+app.get(API_BASE_URL + '/reviews/me/:userId/:placeId', review.findByUserAndPlaceId);
+//app.get(API_BASE_URL + '/reviews/me/', review.findByUser);
+app.post(API_BASE_URL + '/reviews', review.create);
+app.put(API_BASE_URL + '/reviews/:reviewId', review.update);
+app.delete(API_BASE_URL + '/reviews/:reviewId', review.delete);
+
 /*
- app.get(API_BASE_URL + '/reviews/:userId', reviews.findByUserId);
  app.get(API_BASE_URL + '/reviews/:tipId', tips.read);
 
- app.post(API_BASE_URL + '/tips', ensureAuthenticated, tips.create);
- app.put(API_BASE_URL + '/tips/:tipId', ensureAuthenticated, tips.update);
- app.delete(API_BASE_URL + '/tips/:tipId', ensureAuthenticated, tips.delete);
-
 //API calls for favorites
- app.get(API_BASE_URL + '/favorites/:userId', ensureAuthenticated, favorites.findByUserId);
- app.get(API_BASE_URL + '/favorites/:favoritesId', favorites.getCountById);
+ app.get(API_BASE_URL + '/favorites/:userId', user.findFavorites);
+ app.get(API_BASE_URL + '/favorites/:favoriteId', favorites.getCountById);
 
- app.post(API_BASE_URL + '/favorites', ensureAuthenticated, favorites.add);
- app.delete(API_BASE_URL + '/favorites/:tipId', ensureAuthenticated, favorites.delete);
+ app.post(API_BASE_URL + '/favorites', user.addFavorite);
+ app.delete(API_BASE_URL + '/favorites/:favoriteId', user.deleteFavorite);
 
 //API calls for recent
  app.get(API_BASE_URL + '/recent/:userId', ensureAuthenticated, recent.findByUserId);
