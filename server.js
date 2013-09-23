@@ -79,9 +79,9 @@ app.get(AUTH_URL + '/facebook/callback', auth.fbcallback);
 
 app.get(API_BASE_URL + '/user', user.list);
 app.post(API_BASE_URL + '/user', user.create);
-app.get(API_BASE_URL + '/user/me', user.current);
-app.get(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.read);
-app.put(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.update);
+app.get(API_BASE_URL + '/user/me/:userId', user.current);
+app.get(API_BASE_URL + '/user/:userId', user.read);
+app.put(API_BASE_URL + '/user/:userId', user.update);
 app.delete(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.delete);
 
 app.post(API_BASE_URL + '/check/:uniqueField', user.unique);

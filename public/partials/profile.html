@@ -1,0 +1,120 @@
+<div class="container">
+    <div class="col-offset-4 col-sm-5 well">
+        <form role="form" name="profile_form">
+            <div class="heading">
+                <h4 class="form-heading">Profile</h4>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input  class="form-control"
+                        placeholder="First Name"
+                        type="text"
+                        name="first_name"
+                        ng-model="profile.name.first"
+                        ng-minlength="2"
+                        ng-maxlength="30"
+                        required
+                        ng-focus
+                        ng-disabled="!editMode"/>
+                <div class="alert alert-danger"
+                     ng-show="profile_form.first_name.$dirty && profile_form.first_name.$invalid && !profile_form.first_name.$focused">
+                    <small class="error"
+                           ng-show="profile_form.first_name.$error.required">
+                        Your first name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.first_name.$error.minlength">
+                        Your first name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.first_name.$error.maxlength">
+                        Your first name cannot be longer than 30 characters
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input class="form-control"
+                       type="text"
+                       placeholder="Last Name"
+                       id="last_name"
+                       name="last_name"
+                       ng-model="profile.name.last"
+                       ng-minlength="2"
+                       ng-maxlength="30"
+                       required
+                       ng-focus
+                       ng-disabled="!editMode">
+                <div class="alert alert-danger"
+                     ng-show="profile_form.last_name.$dirty && profile_form.last_name.$invalid && !profile_form.last_name.$focused">
+                    <small class="error"
+                           ng-show="profile_form.last_name.$error.required">
+                        Your last name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.last_name.$error.minlength">
+                        Your last name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.last_name.$error.maxlength">
+                        Your last name cannot be longer than 30 characters
+                    </small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control"
+                       type="email"
+                       placeholder="Email"
+                       id="email"
+                       name="email"
+                       ng-model="profile.email"
+                       required
+                       ng-focus
+                       ensure-unique="email"
+                       ng-disabled="!editMode">
+                <div class="alert alert-danger"
+                     ng-show="profile_form.email.$dirty && profile_form.email.$invalid">
+                    <small class="error"
+                           ng-show="profile_form.email.$invalid && !profile_form.email.$error.unique">
+                        Please enter a valid email.
+                    </small>
+                    <small class="error" ng-show="profile_form.email.$error.unique && profile_form.email != origProfile.email">An account with this email address already exists</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input class="form-control"
+                       type="text"
+                       id="username"
+                       name="username"
+                       ng-model="profile.username"
+                       ng-minlength="2"
+                       ng-maxlength="30"
+                       required
+                       ngFocus
+                       ensure-unique="username"
+                       ng-disabled="!editMode">
+                <div class="alert alert-danger"
+                     ng-show=" (profile_form.username.$viewValue == origProfile.username) && profile_form.username.$dirty && profile_form.username.$invalid">
+                    <small class="error"
+                           ng-show="profile_form.username.$error.required">
+                        User name is required.
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.username.$error.minlength">
+                        Your user name is required to be at least 2 characters
+                    </small>
+                    <small class="error"
+                           ng-show="profile_form.username.$error.maxlength">
+                        Your user name cannot be longer than 30 characters
+                    </small>
+                    <small class="error" ng-show="profile_form.username.$error.unique">That username is taken, please try another</small>
+                </div>
+            </div>
+            <button class="btn btn-default" ng-hide="editMode" ng-click="setEditMode()">Edit</button>
+            <button type="submit" class="btn btn-success" ng-disabled="profile_form.$invalid" ng-show="editMode" ng-click="saveProfile()">Save</button>
+            <button class="btn btn-default" ng-show="editMode" ng-click="cancel()">Cancel</button>
+        </form>
+    </div>
+</div>

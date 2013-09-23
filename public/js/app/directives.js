@@ -113,11 +113,20 @@ angular.module('urbnEscape.directives', []).
     return {
         require: 'ngModel',
         link: function(scope, ele, attrs, c) {
-            scope.$watch(attrs.ngModel, function(newVal) {
+            scope.$watch(attrs.ngModel, function(newVal, oldVal) {
+                if(typeof newVal == 'undefined' || newVal == ''){
+                    return;
+                }
+                if((typeof scope['originalObj'] != 'undefined')){
+                    if(newVal === scope['originalObj'][attrs.ensureUnique]){
+                        checking = true;
+                    }else{
+                        checking = false;
+                    }
+                }
                 if (!checking) {
-                    console.log(ele[0].value);
                     checking = $timeout(function() {
-                        $http.post('/-/api/v1/check/' + attrs.ensureUnique, {'field': ele[0].value})
+                        $http.post('/-/api/v1/check/' + attrs.ensureUnique, {'field': newVal})
                         .success(function(data, status, headers, cfg) {
                                 console.log(data);
                                 c.$setValidity('unique', (data == 'true'));

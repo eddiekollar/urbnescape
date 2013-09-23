@@ -118,14 +118,49 @@ angular.module('urbnEscape.controllers', []).
   .controller('PlaceDetailsCtrl', ['$scope', '$http', '$location', 'CurrentPlaceService', function($scope, $http, $location, CurrentPlaceService) {
     $scope.place = CurrentPlaceService.get();
 
-    console.log($scope.place.id);
-
     $http.get('/-/api/v1/reviews/'+$scope.place._id)
         .success(function(data){
             $scope.reviews = data;
         }).error(function(error) {
             console.log(error);
         });
+  }])
+  .controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+    $scope.originalObj = {};
+    $scope.editMode = false;
+    $scope.profile = {};
+
+    $http({method: 'GET', url: '/-/api/v1/user/me/' + $rootScope.user.id})
+        .success(function(data){
+            $scope.originalObj = angular.copy(data.profile);
+            $scope.profile = data.profile;
+        }).error(function(error) {
+            console.log(error);
+        });
+
+    $scope.setEditMode = function(){
+        $scope.editMode = !$scope.editMode;
+    };
+
+    $scope.cancel = function(){
+        console.log($scope.originalObj);
+        $scope.profile = angular.copy($scope.originalObj);
+        $scope.setEditMode();
+    };
+
+    $scope.saveProfile = function(){
+        if(!angular.equals($scope.profile, $scope.originalObj)){
+            $http.put('/-/api/v1/user/' + $scope.user.id, {user: $scope.profile}).
+            success(function(data) {
+                console.log(data);
+            }).error(function(error) {
+                $scope.errorMessage = error.message;
+                console.log(error);
+            });
+        }
+
+        $scope.setEditMode();
+    };
   }])
   .controller('MapCtrl', ['$scope', '$http', 'CurrentPlaceService', function($scope, $http, CurrentPlaceService) {
     $scope.place = CurrentPlaceService.get();

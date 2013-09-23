@@ -48,7 +48,6 @@ userSchema.statics.createFromProfile = function (p, fn) {
     delete p.password;
     p.username = p.username.toLowerCase();
     p.email = p.email.toLowerCase();
-    console.log(p);
     u.profile = p;
     u.save(fn);
 };
@@ -122,6 +121,23 @@ userSchema.statics.findOneOrCreate = function(accessToken, refreshToken, fbprofi
             });
         } else {
             return u.getProfile();
+        }
+    });
+};
+
+userSchema.statics.update = function(userId, user, fn) {
+    User.findById(userId, function (err, u) {
+        if (err) {
+            fn(err,false);
+        }
+        if (!u) {
+            console.log(err);
+            fn(err, false);
+        } else {
+            user.username = user.username.toLowerCase();
+            user.email = user.email.toLowerCase();
+            u.profile = user;
+            u.save(fn);
         }
     });
 };

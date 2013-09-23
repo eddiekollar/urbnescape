@@ -57,12 +57,20 @@ exports.update = function (req, res) {
     // get the user by the user id.
     // a user can only update their own entity
     // TODO admin should be able to modify all.
-    if (!req.session.userId || (String(req.session.userId) !== String(req.params.userId))) {
+    /* if (!req.session.userId || (String(req.session.userId) !== String(req.params.userId))) {
         return res.send(403); // forbidden
-    }
-    user.update(req.params.userId, req.body, function (err, u) {
+    } */
+    console.log(JSON.stringify(req.body.user));
+    user.User.update(req.params.userId, req.body.user, function (err, u) {
         // send the found user back to the client
-        return res.send(u.getProfile());
+        if (err) {
+            return res.send(400, err);
+        }
+        if(!u){
+            return res.send({});
+        }else{
+            return res.send(201, u.getProfile());
+        }
     });
 };
 
@@ -78,13 +86,20 @@ exports.delete = function (req, res) {
 // GET */users/me
 exports.current = function (req, res) {
     // if there is no userId return not found 401 Unauthorized
+    /*
     if (!req.session.userId) {
         return res.send(401); // Unauthorized
-    }
+    }*/
     // get the user by the user id stored in the session
-    user.read(req.session.userId, function (err, u) {
-        // send the found user back to the client
-        return res.send(u.getProfile() || {});
+    user.User.findById(req.params.userId, function (err, u) {
+        if (err) {
+            return res.send(400, err);
+        }
+        if(!u){
+            return res.send({});
+        }else{
+        return res.send(201, u.getProfile());
+        }
     });
 };
 
@@ -92,29 +107,24 @@ exports.unique = function (req,res) {
     if(req.params.uniqueField == 'username'){
         user.User.findOne({'profile.username' : req.body.field.toLowerCase()}, function(err, u){
             if(err) {
-                console.log(err);
                 return res.send(401, err);
             }
             if(!u) {
                 return res.send(true);
             }
             if(u) {
-                console.log(u.id);
                 return res.send(false);
             }
         });
     }else if(req.params.uniqueField == 'email'){
         user.User.findOne({'profile.email' : req.body.field.toLowerCase()}, function(err, u){
             if(err) {
-                console.log(err);
                 return res.send(401, err);
             }
             if(!u) {
-                console.log(req.params.uniqueField + ': ' + req.body.field.toLowerCase());
                 return res.send(true);
             }
             if(u) {
-                console.log(u.id);
                 return res.send(false);
             }
         });
