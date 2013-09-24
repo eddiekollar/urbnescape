@@ -130,3 +130,68 @@ exports.unique = function (req,res) {
         });
     }
 };
+
+exports.favoritesIds = function(req, res) {
+    user.User.findById(req.params.userId, function(err, u){
+        if(err) {
+            return res.send(401, err);
+        }
+        if(!u) {
+            return res.send([]);
+        }
+        if(u) {
+            return res.send(u.favorites);
+        }
+    });
+};
+
+exports.addFavorite = function(req, res) {
+    var userId = req.body.userId;
+    var placeId = req.body.placeId;
+
+    user.User.findById(userId, function(err, u){
+        if(err) {
+            return res.send(401, err);
+        }
+        if(!u) {
+            return res.send(400);
+        }
+        if(u) {
+            u.favorites.push(placeId);
+            u.save(function(err, user){
+                if(err) {
+                    return res.send(401, err);
+                }if(!user){
+                    return res.send(400, "Can't save");
+                }else{
+                    return res.send(200);
+                }
+
+            });
+        }
+    });
+};
+
+exports.deleteFavorite = function(req, res){
+    var userId = req.params.userId;
+    var placeId = req.params.placeId;
+
+    user.User.findById(userId, function(err, u){
+        if(err) {
+            return res.send(401, err);
+        }
+        if(!u) {
+            return res.send([]);
+        }
+        if(u) {
+
+            //var index = u.favorites.indexOf(placeId);
+            //if (index != -1){
+                //u.favorites.splice(index, placeId);
+                u.favorites.remove(placeId);
+                u.save();
+            //}
+            return res.send(200);
+        }
+    });
+};

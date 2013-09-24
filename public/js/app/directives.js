@@ -108,7 +108,7 @@ angular.module('urbnEscape.directives', []).
         }
     }
 }])
-    .directive('ensureUnique', ['$http', '$timeout', function($http, $timeout) {
+  .directive('ensureUnique', ['$http', '$timeout', function($http, $timeout) {
     var checking = null;
     return {
         require: 'ngModel',
@@ -118,7 +118,7 @@ angular.module('urbnEscape.directives', []).
                     return;
                 }
                 if((typeof scope['originalObj'] != 'undefined')){
-                    if(newVal === scope['originalObj'][attrs.ensureUnique]){
+                    if(newVal == scope['originalObj'][attrs.ensureUnique]){
                         checking = true;
                     }else{
                         checking = false;
@@ -135,6 +135,55 @@ angular.module('urbnEscape.directives', []).
                                 checking = null;
                             });
                     }, 500);
+                }
+            });
+        }
+    }
+}])
+    .directive('favoriteButton', ['$rootScope', '$http', function($rootScope, $http) {
+    return {
+        restrict: 'A',
+        scope: {
+          isfavorite: '@'
+        },
+        link: function(scope, element, attrs, ctrl) {
+            var inFavorites = scope.$parent.$parent.inFavorites;
+            var placeId = scope.$parent.place._id
+
+            if(inFavorites(placeId)){
+                element.addClass('favorite');
+                element.removeClass('nofavorite');
+            }else{
+                element.addClass('nofavorite');
+                element.removeClass('favorite');
+            }
+
+            element.bind('click', function(evt) {
+                if(typeof placeId !== 'undefined'){
+                    if(! inFavorites(placeId)){
+                        element.addClass('favorite');
+                        element.removeClass('nofavorite');
+                        $http.post('/-/api/v1/favorites', {'userId': $rootScope.user.id, 'placeId': placeId})
+                            .success(function(data){
+                                scope.$parent.$parent.myFavorites.push(placeId);
+                            })
+                            .error(function(error) {
+                                console.log(error);
+                            });
+                    }else if(inFavorites(placeId)){
+                        element.addClass('nofavorite');
+                        element.removeClass('favorite');
+                        $http.delete('/-/api/v1/favorites/' + $rootScope.user.id + '/' + placeId)
+                            .success(function(data){
+                                var indx = scope.$parent.$parent.myFavorites.indexOf(placeId);
+                                if(indx !== -1){
+                                    scope.$parent.$parent.myFavorites.splice(indx, 1);
+                                }
+                            })
+                            .error(function(error) {
+                                console.log(error);
+                            });
+                    }
                 }
             });
         }

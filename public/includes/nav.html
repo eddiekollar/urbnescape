@@ -13,17 +13,17 @@
         </div></li>
         <li>
             <button ng-hide="authenticated" type="button" class="btn btn-default" ng-click="logInPage()">
-                Login
+                Log In
             </button>
             <button ng-hide="authenticated" type="button" class="btn btn-default" ng-click="signUpPage()">
-                Signup
+                Sign Up
             </button>
             <button ng-show="authenticated" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 {{ user.profile.username }} <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="#/profile">Profile</a></li>
-                <li><a href="#" ng-click="logOut()">Logout</a></li>
+                <li><a href="#" ng-click="logOut()">Log Out</a></li>
             </ul>
         </li>
     </ul>

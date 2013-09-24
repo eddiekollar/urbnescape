@@ -35,7 +35,6 @@ passport.use(new LocalStrategy(
             if (!usr) {
                 return fn(err, false, {message: 'Unknown username'});
             }
-            console.log("Local strategy id: " + usr._id);
             user.User.authenticate(usr._id, password, function (err, valid) {
                 if (err) {
                     return fn(err);

@@ -108,12 +108,22 @@ angular.module('urbnEscape.controllers', []).
     $scope.addPlacePage = function(){
         $location.path('/addPlaceView');
     };
-    /*
-    $http.get('/placeslist', {category : $scope.category}).
-        success(function(data){
-            $scope.places = data;
-            console.log("Data received");
-    }); */
+
+    if($rootScope.authenticated){
+        $scope.myFavorites = [];
+        $http.get('/-/api/v1/favorites/ids/' + $scope.user.id)
+            .success(function(data){
+                if(typeof data !== 'undefined'){
+                    $scope.myFavorites = data;
+                }
+            }).error(function(error) {
+                console.log(error);
+            });
+
+        $scope.inFavorites = function(id) {
+            return ($scope.myFavorites.indexOf(id) !== -1);
+        };
+    }
   }])
   .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentPlaceService', function($rootScope, $scope, $http, $location, CurrentPlaceService) {
     $scope.originalObj = {};

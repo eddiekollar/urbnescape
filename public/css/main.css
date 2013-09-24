@@ -83,3 +83,11 @@ a, p{
 
 textarea.ng-dirty.ng-valid, input.ng-dirty.ng-valid { border:1px solid Green; }
 textarea.ng-dirty.ng-invalid, input.ng-dirty.ng-invalid { border:1px solid Red; }
+
+.favorite {
+    color: #ff69b4;
+}
+
+.nofavorite {
+    color: #a9a9a9;
+}

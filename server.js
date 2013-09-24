@@ -102,15 +102,14 @@ app.post(API_BASE_URL + '/reviews', review.create);
 app.put(API_BASE_URL + '/reviews/:reviewId', review.update);
 app.delete(API_BASE_URL + '/reviews/:reviewId', review.delete);
 
+//API calls for favorites
+app.get(API_BASE_URL + '/favorites/ids/:userId', user.favoritesIds);
+app.post(API_BASE_URL + '/favorites', user.addFavorite);
+app.delete(API_BASE_URL + '/favorites/:userId/:placeId', user.deleteFavorite);
+
 /*
  app.get(API_BASE_URL + '/reviews/:tipId', tips.read);
-
-//API calls for favorites
- app.get(API_BASE_URL + '/favorites/:userId', user.findFavorites);
  app.get(API_BASE_URL + '/favorites/:favoriteId', favorites.getCountById);
-
- app.post(API_BASE_URL + '/favorites', user.addFavorite);
- app.delete(API_BASE_URL + '/favorites/:favoriteId', user.deleteFavorite);
 
 //API calls for recent
  app.get(API_BASE_URL + '/recent/:userId', ensureAuthenticated, recent.findByUserId);
