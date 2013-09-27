@@ -11,38 +11,50 @@ angular.module('urbnEscape.directives', []).
         template: '<div></div>',
         link: function(scope, element, attrs) {
             var marker = L.marker();
-            var map = L.map('map');
+
+            var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/96818/256/{z}/{x}/{y}.png',
+            cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
+            map = new L.Map('map', {layers: [cloudmade], zoom: 14 }),
+            editableLayers = new L.FeatureGroup();
+
             map.doubleClickZoom.disable();
+            map.addLayer(editableLayers);
+            L.drawLocal.draw.toolbar.buttons.polyline = "Draw a path";
+            L.drawLocal.draw.toolbar.buttons.marker = "Add a place";
 
-            //create a CloudMade tile layer and add it to the map
-            L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-                maxZoom: 18
-            }).addTo(map);
-
-            /*
-            //add markers dynamically
-            var points = [{lat: 40, lng: -86},{lat: 40.1, lng: -86.2}];
-            updatePoints(points);
-
-            function updatePoints(pts) {
-                for (var p in pts) {
-                    L.marker([pts[p].lat, pts[p].lng]).addTo(map);
+            var options = {
+                draw: {
+                    polyline: {
+                        metric: false
+                    },
+                    polygon: false,
+                    circle: false,
+                    rectangle: false
+                },
+                edit: {
+                    featureGroup: editableLayers
                 }
-            }
+            };
 
-            //add a watch on the scope to update your points.
-            // whatever scope property that is passed into
-            // the poinsource="" attribute will now update the points
-            scope.$watch(attr.pointsource, function(value) {
-                updatePoints(value);
+            var drawControl = new L.Control.Draw(options);
+            map.addControl(drawControl);
+
+            map.on('draw:drawstart', function (e) {
+                var type = e.layerType;
+
+                map.removeLayer(marker);
+
+                if(type === 'marker'){
+                }else if(type === 'polyline'){
+                    editableLayers.clearLayers();
+                }
             });
-            */
 
             var GetServiceUrl = function(latlng) {
                 var parameters = L.Util.extend({
                     format: 'json',
                     lat: latlng.lat,
-                    lon: latlng.lng,
+                    lon: latlng.lon,
                     zoom: 18,
                     addressdetails: 1
                 });
@@ -64,6 +76,33 @@ angular.module('urbnEscape.directives', []).
                 }.bind(this));
             };
 
+            map.on('draw:created', function (e) {
+                var type = e.layerType,
+                    layer = e.layer;
+
+                console.log(e);
+                var latLngs = [];
+
+                function cleanObj(obj) {
+                    return {lat: obj.lat, lon: obj.lng};
+                }
+
+                if (type === 'marker') {
+                    editableLayers.clearLayers();
+                    latLngs = [cleanObj(layer.getLatLng())];
+                }else if(type==='polyline'){
+                    angular.copy(layer.getLatLngs(), latLngs);
+                    latLngs = latLngs.map(cleanObj);
+                }
+                editableLayers.addLayer(layer);
+                console.log(latLngs);
+                scope[attrs.ngModel].geoData.latLngs = latLngs;
+                scope[attrs.ngModel].geoData.layerType = type;
+
+                var url = GetServiceUrl(latLngs[0]);
+                GetData(url);
+            });
+
             function onLocationFound(e) {
                 var radius = e.accuracy / 2;
 
@@ -74,20 +113,10 @@ angular.module('urbnEscape.directives', []).
                 alert(e.message);
             }
 
-            map.on('dblclick', function(e) {
-                marker.setLatLng(e.latlng);
-                scope[attrs.ngModel].lat = parseFloat(e.latlng.lat).toFixed(5);
-                scope[attrs.ngModel].lon = parseFloat(e.latlng.lng).toFixed(5);
-
-                // e is an event object (MouseEvent in this case)
-                var url = GetServiceUrl(e.latlng);
-                GetData(url);
-            });
-
             map.on('locationfound', onLocationFound);
             map.on('locationerror', onLocationError);
 
-            map.locate({setView: true, maxZoom: 14});
+            map.locate({setView: true});
         }
     };
   }])

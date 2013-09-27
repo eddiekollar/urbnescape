@@ -8,6 +8,7 @@ angular-seed/
 data/
 
 #External js libraries
+bower_components/
 public/bower_components/
 public/js/*.geosearch.*
 public/lib/
@@ -15,3 +16,6 @@ public/lib/
 #Node related
 npm-debug.log
 node_modules/
+
+#log files
+logs/

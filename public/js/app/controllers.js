@@ -69,6 +69,7 @@ angular.module('urbnEscape.controllers', []).
 
     $scope.place = {};
     $scope.place.category = CurrentCategory.name;
+    $scope.place.geoData = {};
     $scope.review = {quietlevel:1, crowd: 1};
 
     $scope.categories = ['VIEW', 'PARK', 'TRAIL', 'SOLITUDE'];
@@ -78,17 +79,20 @@ angular.module('urbnEscape.controllers', []).
     };
 
     $scope.addPlace = function(){
-        $scope.place.createdBy = $rootScope.user.id;
-        $scope.review.createdBy = $rootScope.user.id;
+        if($scope.place.geoData.latLngs.length > 0){
+            $scope.place.createdBy = $rootScope.user.id;
+            $scope.review.createdBy = $rootScope.user.id;
 
-        $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
-            success(function(data) {
+            $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
+                success(function(data) {
 
-        }).error(function(error) {
-                $scope.errorMessage = error.message;
-            });
+            }).error(function(error) {
+                    $scope.errorMessage = error.message;
+                });
 
-        $location.path('/placesView');
+            $location.path('/placesView');
+        }else
+            window.alert("Add something on the map");
     };
   }])
   .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'CurrentCategory', 'CurrentPlaceService' , function($rootScope, $scope, $http, $location, CurrentCategory, CurrentPlaceService) {
@@ -248,16 +252,24 @@ angular.module('urbnEscape.controllers', []).
   .controller('MapCtrl', ['$scope', '$http', 'CurrentPlaceService', function($scope, $http, CurrentPlaceService) {
     $scope.place = CurrentPlaceService.get();
 
-    var latLng = new L.LatLng(parseFloat($scope.place.lat), parseFloat($scope.place.lon));
+    //redo this: default to users location
+    var latLng = new L.LatLng(0, 0);
 
-    var map = L.map('map').setView(latLng, 14);
-    L.marker(latLng).addTo(map);
-    map.doubleClickZoom.disable();
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/997/256/{z}/{x}/{y}.png',
+    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
+    map = new L.Map('map', {layers: [cloudmade], center: latLng, zoom: 14 });
 
-    //create a CloudMade tile layer and add it to the map
-    L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        setView: true
-    }).addTo(map);
+    if (typeof $scope.place.geoData.layerType !== 'undefined') {
+        var latLngs = $scope.place.geoData.latLngs;
+        if($scope.place.geoData.layerType === 'marker'){
+            var marker = L.marker(latLngs[0]).addTo(map);
+             map.setView(latLngs[0], 16);
+        }else{
+            var path = L.polyline($scope.place.geoData.latLngs).addTo(map);
+            map.fitBounds(path.getBounds());
+            var startMarker = L.marker(latLngs[0]).addTo(map);
+            var finishMarker = L.marker(latLngs[latLngs.length - 1]).addTo(map);
+        }
 
+    };
 }]);

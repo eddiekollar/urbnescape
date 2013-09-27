@@ -15,6 +15,7 @@ var API_BASE_URL = '/-/api/v1';
 var AUTH_URL = '/-/auth';
 
 var app = exports.app = express();
+var logger   = require('./lib/logging')(app.settings.env);
 
 app.configure(function(){
     app.set('dbUrl', config.db[app.settings.env]);

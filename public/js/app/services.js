@@ -16,8 +16,10 @@ angular.module('urbnEscape.services', []).
         var currentPlace = {
             name: '',
             location: '',
-            lat: 0,
-            lon: 0,
+            geoData:    {
+                layerType:   '',
+                latLngs: []  
+            },
             category: '',
             description: ''
         };
