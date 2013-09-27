@@ -15,7 +15,6 @@ public/lib/
 
 #Node related
 npm-debug.log
-node_modules/
 
 #log files
 logs/
