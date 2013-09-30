@@ -45,7 +45,11 @@ angular.module('urbnEscape.controllers', []).
     };
 
     $scope.facebookLogIn = function() {
-
+        $http.get('/-/auth/facebook/login')
+            .success(function(url){
+                console.log(url);
+                //$window.location.href = url;
+            });
     };
 
     }])
@@ -216,7 +220,7 @@ angular.module('urbnEscape.controllers', []).
     $scope.editMode = false;
     $scope.profile = {};
 
-    $http({method: 'GET', url: '/-/api/v1/user/me/' + $rootScope.user.id})
+    $http({method: 'GET', url: '/-/api/v1/user/me/'})
         .success(function(data){
             $scope.originalObj = angular.copy(data.profile);
             $scope.profile = data.profile;
@@ -236,7 +240,7 @@ angular.module('urbnEscape.controllers', []).
 
     $scope.saveProfile = function(){
         if(!angular.equals($scope.profile, $scope.originalObj)){
-            $http.put('/-/api/v1/user/' + $scope.user.id, {user: $scope.profile}).
+            $http.put('/-/api/v1/user/', {userId: $scope.user.id, user: $scope.profile}).
             success(function(data) {
                 $rootScope.user = data.username;
                 console.log(data);

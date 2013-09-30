@@ -102,7 +102,7 @@ userSchema.statics.findByEmailOrUsername = function (username, fn) {
 
 //Synchronous version
 userSchema.statics.findOneOrCreate = function(accessToken, refreshToken, fbprofile) {
-    User.findByEmailOrUsername(fbprofile.email, function (err, u) {
+    User.findByEmailOrUsername(fbprofile.emails[0].value, function (err, u) {
         if (!u) {
             var profile = {
                 name    : {
@@ -111,15 +111,17 @@ userSchema.statics.findOneOrCreate = function(accessToken, refreshToken, fbprofi
                 },
                 email : fbprofile.email
             };
+            console.log("Creating user from profile.");
             User.createFromProfile(profile,function (err, u) {
                 if (err) {
                     //
                     return null;
+                }if(u){
+                    return u.getProfile();
                 }
-
-                return u.getProfile();
             });
         } else {
+            console.log("Found one: " + JSON.stringify(u));
             return u.getProfile();
         }
     });

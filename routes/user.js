@@ -57,11 +57,12 @@ exports.update = function (req, res) {
     // get the user by the user id.
     // a user can only update their own entity
     // TODO admin should be able to modify all.
-    /* if (!req.session.userId || (String(req.session.userId) !== String(req.params.userId))) {
+    console.log(req.user + " " + JSON.stringify(req.body.user));
+    if (!req.user || (String(req.user) !== String(req.body.userId))) {
         return res.send(403); // forbidden
-    } */
+    }
     console.log(JSON.stringify(req.body.user));
-    user.User.update(req.params.userId, req.body.user, function (err, u) {
+    user.User.update(req.user, req.body.user, function (err, u) {
         // send the found user back to the client
         if (err) {
             return res.send(400, err);
@@ -85,18 +86,19 @@ exports.delete = function (req, res) {
 
 // GET */users/me
 exports.current = function (req, res) {
+    console.log(req.user);
     // if there is no userId return not found 401 Unauthorized
     /*
     if (!req.session.userId) {
         return res.send(401); // Unauthorized
     }*/
     // get the user by the user id stored in the session
-    user.User.findById(req.params.userId, function (err, u) {
+    user.User.findById(req.user, function (err, u) {
         if (err) {
             return res.send(400, err);
         }
         if(!u){
-            return res.send({});
+            return res.send(400);
         }else{
         return res.send(201, u.getProfile());
         }

@@ -1,23 +1,26 @@
-'use strict';
-
 var passport            = require('passport')
     , LocalStrategy     = require('passport-local').Strategy
     , FacebookStrategy  = require('passport-facebook').Strategy
     , config            = require('../config')
-    , user              = require('../models/user');
+    , user              = require('../models/user').User;
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.
-passport.serializeUser(function (user, fn) {
-    fn(null, user.id);
+passport.serializeUser(function (u, done) {
+    done(null, u.id);
 });
 
-passport.deserializeUser(function (id, fn) {
-    user.User.findById(id, function (err, user) {
-        fn(err, user);
+passport.deserializeUser(function (id, done) {
+    user.findById(id, function (err, u) {
+        if(err){
+            done(err);
+        }
+        else{
+            done(null,u.id);
+        }
     });
 });
 
@@ -28,21 +31,23 @@ passport.deserializeUser(function (id, fn) {
 //   however, in this example we are using a baked-in set of users.
 passport.use(new LocalStrategy(
     function (username, password, fn) {
-        user.User.findByEmailOrUsername(username, function (err, usr) {
+        console.log("LocalStrategy");
+        user.findByEmailOrame(username, function (err, usr) {
             if (err) {
                 return fn(err, false, {message: 'An Error occured'});
             }
             if (!usr) {
                 return fn(err, false, {message: 'Unknown username'});
             }
-            user.User.authenticate(usr._id, password, function (err, valid) {
+            user.authenticate(usr._id, password, function (err, valid) {
                 if (err) {
                     return fn(err);
                 }
                 if (!valid) {
                     return fn(null, false, {message: 'Invalid Password'});
+                }else{
+                    return fn(err, usr);
                 }
-                return fn(err, usr);
             });
         });
     }
@@ -50,46 +55,56 @@ passport.use(new LocalStrategy(
 
 //TODO: Setup environment specific callback URL
 passport.use(new FacebookStrategy({
-        clientID: config.fb.appId,
-        clientSecret: config.fb.appSecret,
-        callbackURL: 'https://127.0.0.1:3000/facebook/callback'
+        clientID: '640008739351430',
+        clientSecret: '918715fbba50580edbd07aa8f42e9245',
+        callbackURL: 'http://localhost:5000/-/auth/facebook/callback',
+        passReqToCallback: true
     },
-    function(accessToken, refreshToken, profile, done) {
+    function(req, accessToken, refreshToken, profile, done) {
         // asynchronous verification, for effect...
-        process.nextTick(function () {
-
-            user.User.findOneOrCreate(accessToken, refreshToken, profile);
-            return done(null, profile);
-        });
+        //process.nextTick(function () {
+            u = user.findOneOrCreate(accessToken, refreshToken, profile);
+            req.res.redirect('/');
+            return done(null, u);
+        //});
     }
 ));
 
 exports.login = function (req, res, fn) {
-    passport.authenticate('local', function (err, user, info) {
+    passport.authenticate('local', function (err, u, info) {
         if (err) {
-            return fn(err);
+            return res.send(err);
         }
-        if (!user) {
+        if (!u) {
             return res.send(401, info);
         }
 
-        req.logIn(user, function (err) {
+        req.logIn(u, function (err) {
             if (err) {
-                return fn(err);
+                return res.send(err);
             }
-            return res.send(200, user.getProfile());
+            return res.send(u.getProfile());
         });
     })(req, res, fn);
 };
 
-exports.fblogin = function(){
-    passport.authenticate('facebook');
+var loggedin = exports.loggedin = function(req, res){
+    console.log("Logged in" + req.user);
 };
-exports.fbcallback = function(){
-    passport.authenticate('facebook', { failureRedirect: '/error' }),
-        function(req, res){
-            res.send(200, 'Successfully authenticated.');
-        };
+
+exports.fblogin = function(req, res, next){
+    passport.authenticate('facebook', {scope: ['email']})(req, res, next);
+    console.log("arguments beings passed from fblogin authentication call: " + arguments.length);
+};
+
+exports.fbcallback = function(req, res, next){
+    console.log(arguments[2].toString());
+    passport.authenticate('facebook', {failureRedirect: '/' ,successRedirect: '/'},
+       function() {
+        console.log("callback for fbcallback auth successful");
+       })(req, res, next);
+    console.log("fbcallback");
+
 };
 
 // GET */logout

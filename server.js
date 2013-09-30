@@ -1,6 +1,6 @@
 
-var express     = require('express')
-    , MongoStore = require('connect-mongo')(express)
+var express     = require('express'),
+     MongoStore = require('connect-mongo')(express)
     , mongoose  = require('mongoose')
     , path      = require('path')
     , passport  = require('passport')
@@ -18,43 +18,36 @@ var app = exports.app = express();
 var logger   = require('./lib/logging')(app.settings.env);
 
 app.configure(function(){
+    app.set('client-facebook-signup-path', '/facebook?action=signup');
+    app.set('client-facebook-signin-path', '/facebook?action=signin');
     app.set('dbUrl', config.db[app.settings.env]);
+     var mongodb = mongoose.connect(app.get('dbUrl'),{server:{poolSize:2}});
     app.use(express.logger('dev'));
-    app.use(express.compress());
+    //app.use(express.compress());
     app.use(express.bodyParser());
     app.use(express.favicon());
     app.use(express.methodOverride());
-    app.use(express.cookieParser('secret'));
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.use('/public', express.static(__dirname + '/public'));
-});
-
-app.configure('production', function () {
- var mongodb = mongoose.connect(app.get('dbUrl'),{server:{poolSize:2}});
-
- app.use(express.session({
-     secret:'secret',
-     maxAge: new Date(Date.now() + 3600000),
-     store: new MongoStore(
-     {//url:  app.get('dbUrl')
-     mongoose_connection: mongodb.connections[0]
-     })
-    }));
-});
-
-app.configure('development', function () {
-    var mongodb = mongoose.connect(app.get('dbUrl'),{server:{poolSize:2}});
-    app.use(express.errorHandler());
-
+    app.use(express.cookieParser());
     app.use(express.session({
         secret:'secret',
         maxAge: new Date(Date.now() + 3600000),
         store: new MongoStore(
-            {//url:  app.get('dbUrl')
-             mongoose_connection: mongodb.connections[0]
-             })
+        {//url:  app.get('dbUrl')
+            mongoose_connection: mongodb.connections[0]
+        })
     }));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
+    app.use('/public', express.static(__dirname + '/public'));
+});
+
+app.configure('production', function () {
+
+});
+
+app.configure('development', function () {
+    app.use(express.errorHandler());
 });
 
 /*
@@ -65,7 +58,10 @@ app.configure('test', function () {
 */
 
 function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) { return next(); }
+    if (req.isAuthenticated()) {
+        console.log("Authenticated");
+        return next();
+    }
     return res.send(401, 'Not Authorized');
 }
 
@@ -75,14 +71,13 @@ app.get(AUTH_URL + '/logout', auth.logout);
 app.post(AUTH_URL + '/login', auth.login);
 app.get(AUTH_URL +'/facebook/login', auth.fblogin);
 app.get(AUTH_URL + '/facebook/callback', auth.fbcallback);
-
-//app.post(AUTH_URL + '/password', passwordRoutes.list);
+app.get(AUTH_URL + '/loggedin', auth.loggedin);
 
 app.get(API_BASE_URL + '/user', user.list);
 app.post(API_BASE_URL + '/user', user.create);
-app.get(API_BASE_URL + '/user/me/:userId', user.current);
-app.get(API_BASE_URL + '/user/:userId', user.read);
-app.put(API_BASE_URL + '/user/:userId', user.update);
+app.get(API_BASE_URL + '/user/me/', ensureAuthenticated, user.current);
+app.get(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.read);
+app.put(API_BASE_URL + '/user/', ensureAuthenticated, user.update);
 app.delete(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.delete);
 
 app.post(API_BASE_URL + '/check/:uniqueField', user.unique);

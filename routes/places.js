@@ -1,15 +1,12 @@
-/**
- * Created with JetBrains WebStorm.
- * User: eddie
- * Date: 8/13/13
- * Time: 3:14 PM
- * To change this template use File | Settings | File Templates.
- */
 
 var fs = require('fs')
     , path = require('path')
     , Place = require('../models/place.js')
     , Review = require('../models/review.js');
+
+var calcDistance = function(obj){
+
+};
 
 exports.findById = function(req, res) {
     var id = req.params.id;
@@ -54,13 +51,6 @@ exports.addPlace = function(req, res) {
             console.log(r);
             p.reviews.push(r.id);
             p.save();
-            //find user and save review id
-            /*
-            user.Users.findById(r.createdBy, function(err,u){
-            * u.reviews.push(r.id);
-            * u.save();
-            * });
-            * */
         });
 
         res.send(201, p);
