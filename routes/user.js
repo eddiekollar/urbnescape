@@ -54,14 +54,9 @@ exports.read = function (req, res) {
 
 // PUT */users/{id}
 exports.update = function (req, res) {
-    // get the user by the user id.
-    // a user can only update their own entity
-    // TODO admin should be able to modify all.
-    console.log(req.user + " " + JSON.stringify(req.body.user));
     if (!req.user || (String(req.user) !== String(req.body.userId))) {
         return res.send(403); // forbidden
     }
-    console.log(JSON.stringify(req.body.user));
     user.User.update(req.user, req.body.user, function (err, u) {
         // send the found user back to the client
         if (err) {

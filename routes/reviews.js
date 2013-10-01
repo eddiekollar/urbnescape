@@ -15,8 +15,6 @@ exports.findByPlaceId = function (req, res) {
             console.log(err);
             return res.send(400, err);
         }else{
-            console.log(reviews);
-            // send the found user back to the client
             return res.send(reviews);
         }
     });
@@ -24,7 +22,7 @@ exports.findByPlaceId = function (req, res) {
 
 exports.findByUserAndPlaceId = function(req, res){
     Review.findOne({'placeId': req.params.placeId})
-        .where('createdBy').equals(req.params.userId)
+        .where('createdBy').equals(req.user)
         .populate('createdBy', 'profile.username')
         .exec(function(err, review) {
             if (err) {
@@ -33,8 +31,6 @@ exports.findByUserAndPlaceId = function(req, res){
             }if (!review){
                 return res.send({});
             }else{
-                console.log(req.params.placeId + ' : ' + req.params.userId);
-                console.log(review);
                 return res.send(review);
             }
         });
@@ -62,13 +58,17 @@ exports.update = function (req, res) {
     delete(review.createdBy);
     delete(review.createdDate);
 
-    Review.findByIdAndUpdate(reviewId, review, function (err, r) {
+    Review.findById(reviewId, function (err, r) {
         if (err) {
             return res.send(400, err);
         }
         if(!r){
             return res.send({});
         }else{
+            r.crowd = review.crowd;
+            r.quietlevel = review.quietlevel;
+            r.tips = review.tips;
+            r.save();
             return res.send(201, r);
         }
     });

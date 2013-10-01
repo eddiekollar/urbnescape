@@ -2,12 +2,32 @@
 
 /* Controllers */
 
-angular.module('urbnEscape.controllers', []).
-  controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentCategory', function($rootScope, $scope, $http, $location, CurrentCategory){
-    $scope.category = CurrentCategory.name;
+angular.module('urbnEscape.controllers', ['ngCookies']).
+  controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', '$cookieStore', 'Session', function($rootScope, $scope, $http, $location, $cookieStore, Session){
+    $scope.category = Session.currentCategory;
+    var watchID = 0;
+    $cookieStore.put('CurrentCategory', $scope.category);
 
+    if ("geolocation" in navigator) {
+      /* geolocation is available */
+        navigator.geolocation.getCurrentPosition(function(position) {
+            $cookieStore.put('geo.lat', position.coords.latitude);
+            $cookieStore.put('geo.lon', position.coords.longitude);
+            console.log("Original location: " + position.coords.longitude + " " + position.coords.latitude);
+        });
+/*
+        watchID = navigator.geolocation.watchPosition(function(position) {
+            $cookieStore.put('geo.lat', position.coords.latitude);
+            $cookieStore.put('geo.lon', position.coords.longitude);
+            console.log("Location changed: " + position.coords.longitude + " " + position.coords.latitude);
+        });*/
+    } else {
+      /* geolocation IS NOT available */
+      console.log("geolocation not available");
+    }
+    
     $scope.setCategory = function(newCategory) {
-        CurrentCategory.name = newCategory;
+        Session.currentCategory = newCategory;
         $location.path('/placesView');
     };
 
@@ -65,14 +85,14 @@ angular.module('urbnEscape.controllers', []).
             });
     };
     }])
-  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentCategory', function($rootScope, $scope, $http, $location, CurrentCategory) {
+  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
     //Initialize form data
     if(!$rootScope.authenticated){
         $location.path('/placesView');
     }
 
     $scope.place = {};
-    $scope.place.category = CurrentCategory.name;
+    $scope.place.category = Session.currentCategory;
     $scope.place.geoData = {};
     $scope.review = {quietlevel:1, crowd: 1};
 
@@ -80,6 +100,7 @@ angular.module('urbnEscape.controllers', []).
 
     $scope.activate = function(category){
         $scope.place.category = category;
+        Session.currentCategory = category;
     };
 
     $scope.addPlace = function(){
@@ -99,9 +120,9 @@ angular.module('urbnEscape.controllers', []).
             window.alert("Add something on the map");
     };
   }])
-  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'CurrentCategory', 'CurrentPlaceService' , function($rootScope, $scope, $http, $location, CurrentCategory, CurrentPlaceService) {
+  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', 'CurrentPlaceService' , function($rootScope, $scope, $http, $location, Session, CurrentPlaceService) {
     //Get data from server to list out places
-    $scope.category = CurrentCategory.name;
+    $scope.category = Session.currentCategory;
 
     $http.get('/-/api/v1/places/category/'+$scope.category.toLowerCase())
         .success(function(data){
@@ -140,8 +161,9 @@ angular.module('urbnEscape.controllers', []).
     $scope.hasReview = false;
     $scope.editMode = false;
 
+
     if($rootScope.authenticated){
-        $http.get('/-/api/v1/reviews/me/' + $scope.user.id + '/' + $scope.place._id)
+        $http.get('/-/api/v1/reviews/me/' + $scope.place._id)
             .success(function(data){
                 $scope.myReview = data;
                 if(typeof data._id !== 'undefined'){
@@ -151,6 +173,15 @@ angular.module('urbnEscape.controllers', []).
             }).error(function(error) {
                 console.log(error);
         });
+
+        $scope.updatePlace = function(){
+            $http.get('/-/api/v1/places/' + $scope.place._id).
+            success(function(data) {
+                $scope.place = angular.copy(data);
+            }).error(function(error) {
+                $scope.errorMessage = error.message;
+            });
+        };
 
         $scope.setEditMode = function(){
             $scope.editMode = !$scope.editMode;
@@ -192,14 +223,17 @@ angular.module('urbnEscape.controllers', []).
                         $scope.errorMessage = error.message;
                     });
             }else if(!angular.equals($scope.originalObj, $scope.myReview)){
-                $http.put('/-/api/v1/reviews/' + $scope.user.id, {review: $scope.myReview}).
+                $http.put('/-/api/v1/reviews/' + $scope.myReview._id, {review: $scope.myReview}).
                     success(function(data) {
                         $scope.myReview = data;
                     }).error(function(error) {
                         $scope.errorMessage = error.message;
                         console.log(error);
+                    }).then(function(){
+                        $scope.updatePlace();
                     });
             }
+
             $scope.setEditMode();
         };
     }

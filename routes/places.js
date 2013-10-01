@@ -1,25 +1,54 @@
 
 var fs = require('fs')
     , path = require('path')
+    , haversine = require('../utils/haversine.js')
     , Place = require('../models/place.js')
     , Review = require('../models/review.js');
 
-var calcDistance = function(obj){
-
+var createDistFunc = function(req){
+    return function(obj){
+        obj = obj.toObject();
+        if(req.cookies['geo.lat'] && (typeof req.cookies['geo.lat'] !== 'undefined')){
+            var geo = {lat: Number(req.cookies['geo.lat']), lon: Number(req.cookies['geo.lon'])};
+            obj.geoData.distance = haversine(geo, obj.geoData.latLngs[0]);
+        }else{
+            obj.geoData.distance = 0;
+        }
+        return obj;
+    };
 };
 
 exports.findById = function(req, res) {
-    var id = req.params.id;
-    console.log('Retrieving place: ' + id);
-
+    Place.findById(req.params.placeId, function(err, place){
+        if(err){
+            res.send(400, err);
+        }else if(!place){
+            res.send(400);
+        }else if(place){
+            place = createDistFunc(req)(place);
+            res.send(place);
+        }
+    });
 };
 
 exports.findByCategory = function(req, res) {
     var category = req.params.category;
     var query = Place.find({category: new RegExp(category, 'i')});
 
+    var calcDistance = createDistFunc(req);
+
+    function compare(a,b) {
+      if (a.geoData.distance < b.geoData.distance)
+         return -1;
+      if (a.geoData.distance > b.geoData.distance)
+        return 1;
+      return 0;
+    }
+
     query.exec(function (err, places) {
         if (err) console.log(err);
+        places = places.map(calcDistance);
+        places.sort(compare);
         res.send(places);
     });
 };
@@ -48,9 +77,6 @@ exports.addPlace = function(req, res) {
             if (err){
                 res.send(400, err);
             }
-            console.log(r);
-            p.reviews.push(r.id);
-            p.save();
         });
 
         res.send(201, p);

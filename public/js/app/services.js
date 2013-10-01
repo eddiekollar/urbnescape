@@ -6,12 +6,7 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('urbnEscape.services', []).
-  factory('CurrentCategory', function() {
-        return {
-            name : "VIEW"
-        };
-  })
-  .factory('CurrentPlaceService', function(){
+  factory('CurrentPlaceService', function(){
         var CurrentPlaceService = {};
         var currentPlace = {
             name: '',
@@ -33,32 +28,28 @@ angular.module('urbnEscape.services', []).
         };
 
         return CurrentPlaceService;
-}).factory('Session', function($http) {
+}).factory('Session', function($http, $cookieStore) {
     var Session = {
+        currentCategory: ($cookieStore.get("currentCategory") || "VIEW"),
         data: {
+
             authenticated: false
         },
         user: {
             id: 0,
-            profile: {
-                name  : {
-                    last   : '',
-                    first  : ''
-                },
-                username: '',
-                email : ''
-            }
+            username:''
         },
         isAuthenticated: function() {
-            return this.data.authenticated;
+            return Session.data.authenticated;
         },
         saveSession: function() { /* save session data to db */ },
         updateSession: function() {
             /* load data from db */
             //Session.data = $http.get('session.json').then(function(r) { return r.data;});
+            $cookieStore.get("currentCategory") = Session.currentCategory;
         }
     };
-    Session.updateSession();
+    //Session.updateSession();
     return Session;
 }).factory('User', function($resource) {
     return $resource('http://localhost\\:3000/user/:userId', {}, {

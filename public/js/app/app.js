@@ -1,7 +1,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbnEscape.directives', 'urbnEscape.controllers']).
   config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
-    $locationProvider.html5Mode(true);
+    //$locationProvider.html5Mode(true);
 
     $routeProvider.when('/logIn',               {templateUrl: '/public/partials/logIn.html', controller: 'LogInCtrl'});
     $routeProvider.when('/signUp',               {templateUrl: '/public/partials/signUp.html', controller: 'SignUpCtrl'});
@@ -11,21 +11,4 @@ angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbn
     $routeProvider.when('/profile',             {templateUrl: '/public/partials/profile.html', controller: 'ProfileCtrl'});
     $routeProvider.otherwise({redirectTo: '/placesView'});
 
-    var interceptor = ['$location', '$q', function($location, $q) {
-        function success(response) {
-            return response;
-        }
-
-        function error(response) {
-
-            console.log(response);
-            return $q.reject(response);
-        }
-
-        return function(promise) {
-            return promise.then(success, error);
-        };
-    }];
-
-    $httpProvider.responseInterceptors.push(interceptor);
   }]);

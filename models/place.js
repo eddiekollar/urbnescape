@@ -13,6 +13,8 @@ var placeSchema = new Schema({
                     lon:    {type: Number, default: 0.0}}
                 ]  
     },
+    crowdScore: {type: Number, default: 0},
+    quietlevelScore: {type: Number, default: 0},
     category:   {type: String, default: 'VIEW'},
     description: {type: String, default: ''},
     reviews:    [{type: Schema.Types.ObjectId, ref: 'Review'}],

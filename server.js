@@ -29,8 +29,8 @@ app.configure(function(){
     app.use(express.methodOverride());
     app.use(express.cookieParser());
     app.use(express.session({
+        cookie: { path: '/', httpOnly: false, maxAge: null },
         secret:'secret',
-        maxAge: new Date(Date.now() + 3600000),
         store: new MongoStore(
         {//url:  app.get('dbUrl')
             mongoose_connection: mongodb.connections[0]
@@ -59,7 +59,6 @@ app.configure('test', function () {
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        console.log("Authenticated");
         return next();
     }
     return res.send(401, 'Not Authorized');
@@ -92,7 +91,7 @@ app.post(API_BASE_URL + '/places', places.addPlace);
 
 //API calls for reviews
 app.get(API_BASE_URL + '/reviews/:placeId', review.findByPlaceId);
-app.get(API_BASE_URL + '/reviews/me/:userId/:placeId', review.findByUserAndPlaceId);
+app.get(API_BASE_URL + '/reviews/me/:placeId', ensureAuthenticated, review.findByUserAndPlaceId);
 //app.get(API_BASE_URL + '/reviews/me/', review.findByUser);
 app.post(API_BASE_URL + '/reviews', review.create);
 app.put(API_BASE_URL + '/reviews/:reviewId', review.update);

@@ -80,7 +80,6 @@ angular.module('urbnEscape.directives', []).
                 var type = e.layerType,
                     layer = e.layer;
 
-                console.log(e);
                 var latLngs = [];
 
                 function cleanObj(obj) {
@@ -95,7 +94,6 @@ angular.module('urbnEscape.directives', []).
                     latLngs = latLngs.map(cleanObj);
                 }
                 editableLayers.addLayer(layer);
-                console.log(latLngs);
                 scope[attrs.ngModel].geoData.latLngs = latLngs;
                 scope[attrs.ngModel].geoData.layerType = type;
 

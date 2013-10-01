@@ -31,8 +31,7 @@ passport.deserializeUser(function (id, done) {
 //   however, in this example we are using a baked-in set of users.
 passport.use(new LocalStrategy(
     function (username, password, fn) {
-        console.log("LocalStrategy");
-        user.findByEmailOrame(username, function (err, usr) {
+        user.findByEmailOrUsername(username, function (err, usr) {
             if (err) {
                 return fn(err, false, {message: 'An Error occured'});
             }
