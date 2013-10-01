@@ -10,9 +10,6 @@
             <div class="col-sm-3"><span ng-bind="place.geoData.distance | number"></span> mi</div>
             <div class="col-sm-3">Quiet Level: <span ng-bind="place.quietlevelScore"></span></div>
             <div class="col-sm-3">Crowd: <span ng-bind="place.crowdScore"></span></div>
-            <a class="btn btn-danger" ng-click="updatePlace()">
-            Update
-        </a>
         </p>
     </div>
     <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">

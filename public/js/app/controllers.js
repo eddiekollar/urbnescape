@@ -120,7 +120,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
             window.alert("Add something on the map");
     };
   }])
-  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', 'CurrentPlaceService' , function($rootScope, $scope, $http, $location, Session, CurrentPlaceService) {
+  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
     //Get data from server to list out places
     $scope.category = Session.currentCategory;
 
@@ -130,7 +130,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
     });
 
     $scope.getDetails = function(place) {
-        CurrentPlaceService.set(place);
+        Session.place = place;
         $location.path('/placeDetailsView');
     };
 
@@ -154,13 +154,16 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
         };
     }
   }])
-  .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'CurrentPlaceService', function($rootScope, $scope, $http, $location, CurrentPlaceService) {
+  .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
     $scope.originalObj = {};
-    $scope.place = CurrentPlaceService.get();
+    $scope.place = Session.place;
     $scope.needsReview = false;
     $scope.hasReview = false;
     $scope.editMode = false;
 
+    if(typeof $scope.place._id === 'undefined'){
+        $location.path('/placesView');
+    }
 
     if($rootScope.authenticated){
         $http.get('/-/api/v1/reviews/me/' + $scope.place._id)
@@ -287,8 +290,8 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
         $scope.setEditMode();
     };
   }])
-  .controller('MapCtrl', ['$scope', '$http', 'CurrentPlaceService', function($scope, $http, CurrentPlaceService) {
-    $scope.place = CurrentPlaceService.get();
+  .controller('MapCtrl', ['$scope', '$http', 'Session', function($scope, $http, Session) {
+    $scope.place = Session.place;
 
     //redo this: default to users location
     var latLng = new L.LatLng(0, 0);

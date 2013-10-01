@@ -6,31 +6,10 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('urbnEscape.services', []).
-  factory('CurrentPlaceService', function(){
-        var CurrentPlaceService = {};
-        var currentPlace = {
-            name: '',
-            location: '',
-            geoData:    {
-                layerType:   '',
-                latLngs: []  
-            },
-            category: '',
-            description: ''
-        };
-
-        CurrentPlaceService.set = function(newPlace) {
-            currentPlace = newPlace;
-        };
-
-        CurrentPlaceService.get = function () {
-            return currentPlace;
-        };
-
-        return CurrentPlaceService;
-}).factory('Session', function($http, $cookieStore) {
+  factory('Session', function($http, $cookieStore) {
     var Session = {
         currentCategory: ($cookieStore.get("currentCategory") || "VIEW"),
+        place: {},
         data: {
 
             authenticated: false
