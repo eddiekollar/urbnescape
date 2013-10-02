@@ -68,7 +68,7 @@
             <div class="category-group col-xs-12 col-sm-11 col-sm-offset-1">
               <span class="glyphicon glyphicon-tag"></span><label class="control-label"> Category</label><br>
               <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-warning" ng-class="{'active': {{ category == place.category}}}" ng-repeat='category in categories' ng-click="activate('{{category}}')">
+                <label class="btn btn-warning" ng-class="{'active': {{ category == place.category}}}" ng-repeat='category in categories' ng-click="activate(category)">
                   <input type="radio" id="{{category}}" ng-model="place.category" name="radio">{{category}}
                 </label>
               </div>
