@@ -1,15 +1,16 @@
 <div class="container">
 
-    <div id="map" class="col-lg-12" ng-controller="MapCtrl"></div>
+    <div id="map" class="col-xs-12" ng-controller="MapCtrl"></div>
 
     <div class="well col-12" ng-controller="PlaceDetailsCtrl">
-        <p class="col-offset-3">{{ place.name }}</p>
-        <p class="col-offset-3">{{ place.location }}</p>
-        <p class="col-offset-3">{{ place.description }}</p>
+        <div class="col-xs-1"></div><p class="col-sm-offset-2">{{ place.name }}</p>
+        <div class="col-xs-1"></div><p class="col-sm-offset-3">{{ place.location }}</p>
+        <div class="col-xs-1"></div><p class="col-sm-offset-3">{{ place.description }}</p>
         <p>
-            <div class="col-sm-3"><span ng-bind="place.geoData.distance | number"></span> mi</div>
-            <div class="col-sm-3">Quiet Level: <span ng-bind="place.quietlevelScore"></span></div>
-            <div class="col-sm-3">Crowd: <span ng-bind="place.crowdScore"></span></div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-3"><span ng-bind="place.geoData.distance | number"></span> mi</div>
+            <div class="col-xs-3">Quiet Level: <span ng-bind="place.quietlevelScore"></span></div>
+            <div class="col-xs-3">Crowd: <span ng-bind="place.crowdScore"></span></div>
         </p>
     </div>
     <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">
@@ -21,7 +22,7 @@
     <div ng-show="authenticated && editMode">
         <form role="form" name="addreview_form" class="form-inline">
             <div class="well col-12">
-                <div class="input-group col-lg-5 col-offset-1">
+                <div class="input-group col-xs-6 col-sm-5 col-sm-offset-1">
                     <label class="control-label" for="quietlevel">Quiet Level</label>
                     <div class="">
                         <label class="radio-inline" for="quietlevel-0">
@@ -43,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="control-group  col-lg-4">
+                <div class="control-group col-xs-6 col-sm-5">
                     <span class="glyphicon-group"></span>
                     <img src="/public/img/glyphicons_group.png"/>
                     <label class="control-label" for="crowd">Crowd</label>
@@ -66,15 +67,15 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-lg-2"></div>
+                <div class="col-xs-2"></div>
 
-                <div class="control-group tips-highlights-group col-lg-10 col-offset-1">
+                <div class="control-group tips-highlights-group col-xs-11 col-sm-offset-1">
                     <span class="glyphicon glyphicon-map-marker"></span>
                     <label class="control-label" for="tips">Tips &amp; Highlights</label>
                     <textarea id="tips"
                               name="tips"
                               rows="4"
-                              class="form-control"
+                              class="form-control col-xs-11"
                               placeholder="Add some tips"
                               ng-model="myReview.tips"
                               ng-minlength="2"
@@ -96,74 +97,81 @@
                             Tip cannot be longer than 512 characters
                         </small>
                     </div>
-                    <div class="col-lg-2"></div>
+                    <div class="col-xs-2"></div>
                 </div>
                 <br>
-                <div class="col-offset-1 col-10">
-                    <button type="submit" class="btn btn-success" ng-disabled="addreview_form.$invalid" ng-show="editMode" ng-click="saveMyReview()">Save</button>
-                    <button class="btn btn-default" ng-show="editMode" ng-click="cancel()">Cancel</button>
+                <div class="control-group col-sm-offset-1 col-xs-10">
+                    <label class="control-label" ></label>
+                    <div class="controls">
+                        <button type="submit" class="btn btn-success" ng-disabled="addreview_form.$invalid" ng-show="editMode" ng-click="saveMyReview()">Save</button>
+                        <button class="btn btn-default" ng-show="editMode" ng-click="cancel()">Cancel</button>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
     <div ng-show="authenticated && hasReview && !editMode">
         <div class="well col-12">
-            <div class="col-lg-11 col-offset-1">
+            <div class="col-xs-11 col-sm-offset-1">
                 <span class="glyphicon glyphicon-user"></span>
                 {{ user.profile.username }}
             </div>
-            <div class="col-lg-5 col-offset-1">
+            <div class="col-xs-5 col-sm-offset-1">
                 Quiet Level: {{ myReview.quietlevel }}
             </div>
 
-            <div class="control-group  col-lg-4">
+            <div class="control-group  col-xs-5">
                 <span class="glyphicon-group"></span>
                 <img src="/public/img/glyphicons_group.png"/>
                 Crowd: {{ myReview.crowd }}
             </div>
 
-            <div class="col-lg-10 col-offset-1">
+            <div class="col-xs-11 col-sm-offset-1">
                 <span class="glyphicon glyphicon-map-marker"></span>
                 Tips &amp; Highlights: <br>
                 <textarea id="mytips"
                           name="mytips"
                           rows="4"
-                          cols="80"
+                          class="col-xs-11"
                           ng-disabled="true"
                         >{{ myReview.tips }}</textarea>
             </div>
 
-            <div class="col-offset-1 col-10">
-                <button class="btn btn-success" ng-hide="editMode" ng-click="setEditMode()">Edit</button>
-                <button class="btn btn-danger" ng-hide="editMode" ng-click="deleteMyReview()">Delete</button>
+            <div class="control-group col-sm-offset-1 col-xs-10">
+                <label class="control-label" ></label>
+                <div class="controls">
+                    <button class="btn btn-success" ng-hide="editMode" ng-click="setEditMode()">Edit</button>
+                    <button class="btn btn-danger" ng-hide="editMode" ng-click="deleteMyReview()">Delete</button>
+                </div>
             </div>
         </div>
     </div>
     <div ng-repeat="review in reviews">
         <div class="well col-12" ng-hide="review._id == myReview._id">
-            <div class="col-lg-11 col-offset-1">
+            <div class="col-xs-11 col-sm-offset-1">
                 <span class="glyphicon glyphicon-user"></span>
                 {{ review.createdBy.profile.username }}
             </div>
-            <div class="col-lg-5 col-offset-1">
+            <div class="col-xs-5 col-sm-offset-1">
                 Quiet Level: {{ review.quietlevel }}
             </div>
 
-            <div class="control-group  col-lg-4">
+            <div class="col-xs-5">
                 <span class="glyphicon-group"></span>
                 <img src="/public/img/glyphicons_group.png"/>
                 Crowd: {{ review.crowd }}
             </div>
 
-            <div class="col-lg-10 col-offset-1">
+            <div class="col-xs-11 col-sm-offset-1">
                 <span class="glyphicon glyphicon-map-marker"></span>
                 Tips &amp; Highlights: <br>
                 <textarea id="usertips"
                           name="usertips"
                           rows="4"
-                          cols="80"
+                          class="col-xs-11"
                           ng-disabled="true"
-                          >{{ review.tips }}</textarea>
+                          >{{ review.tips }}
+                </textarea>
             </div>
         </div>
     </div>

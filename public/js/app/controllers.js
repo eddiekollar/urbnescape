@@ -4,18 +4,15 @@
 
 angular.module('urbnEscape.controllers', ['ngCookies']).
   controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', '$cookieStore', 'Session', function($rootScope, $scope, $http, $location, $cookieStore, Session){
-    $scope.category = Session.currentCategory;
-    var watchID = 0;
-    $cookieStore.put('CurrentCategory', $scope.category);
-
     if ("geolocation" in navigator) {
       /* geolocation is available */
         navigator.geolocation.getCurrentPosition(function(position) {
             $cookieStore.put('geo.lat', position.coords.latitude);
             $cookieStore.put('geo.lon', position.coords.longitude);
+
             console.log("Original location: " + position.coords.longitude + " " + position.coords.latitude);
         });
-/*
+        /*
         watchID = navigator.geolocation.watchPosition(function(position) {
             $cookieStore.put('geo.lat', position.coords.latitude);
             $cookieStore.put('geo.lon', position.coords.longitude);
@@ -25,6 +22,8 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
       /* geolocation IS NOT available */
       console.log("geolocation not available");
     }
+    $scope.category = Session.currentCategory;
+    $cookieStore.put('CurrentCategory', $scope.category);
     
     $scope.setCategory = function(newCategory) {
         Session.currentCategory = newCategory;
@@ -96,7 +95,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
     $scope.place.geoData = {};
     $scope.review = {quietlevel:1, crowd: 1};
 
-    $scope.categories = ['VIEW', 'PARK', 'TRAIL', 'SOLITUDE'];
+    $scope.categories = ['VIEW', 'PARK', 'PATH', 'SOLITUDE'];
 
     $scope.activate = function(category){
         $scope.place.category = category;

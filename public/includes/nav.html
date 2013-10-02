@@ -1,13 +1,13 @@
-<div class="header" ng-controller="MainCtrl">
-    <ul class="nav nav-pills pull-right">
+<div class="header row" ng-controller="MainCtrl">
+    <ul class="nav nav-pills pull-right col-xs-5">
         <li><div class="btn-group">
-            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                Places <span class="caret"></span>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Escape to:<span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
+            <ul class="dropdown-menu" role="menu" data-width="auto">
                 <li><a href="#" ng-click="setCategory('VIEW');">Views</a></li>
                 <li><a href="#" ng-click="setCategory('PARK');">Parks</a></li>
-                <li><a href="#" ng-click="setCategory('TRAIL');">Trails</a></li>
+                <li><a href="#" ng-click="setCategory('PATH');">Paths</a></li>
                 <li><a href="#" ng-click="setCategory('SOLITUDE');">Solitude</a></li>
             </ul>
         </div></li>
@@ -27,5 +27,5 @@
             </ul>
         </li>
     </ul>
-    <h3 class="text-muted"><img src="/public/img/logo.png"> </h3>
+    <img class="img-responsive col-xs-7" src="/public/img/x2/main_logo@2x.png">
 </div>

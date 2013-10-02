@@ -10,6 +10,10 @@ angular.module('urbnEscape.services', []).
     var Session = {
         currentCategory: ($cookieStore.get("currentCategory") || "VIEW"),
         place: {},
+        geo: {
+            lat: $cookieStore.get('geo.lat'),
+            lon: $cookieStore.get('geo.lon'),
+        },
         data: {
 
             authenticated: false
@@ -17,6 +21,29 @@ angular.module('urbnEscape.services', []).
         user: {
             id: 0,
             username:''
+        },
+        setLocation: function() {
+            if ("geolocation" in navigator) {
+              /* geolocation is available */
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    $cookieStore.put('geo.lat', position.coords.latitude);
+                    $cookieStore.put('geo.lon', position.coords.longitude);
+
+                    Session.geo.lat = position.coords.latitude;
+                    Session.geo.lon = position.coords.longitude;
+
+                    console.log("Original location: " + position.coords.longitude + " " + position.coords.latitude);
+                });
+                /*
+                watchID = navigator.geolocation.watchPosition(function(position) {
+                    $cookieStore.put('geo.lat', position.coords.latitude);
+                    $cookieStore.put('geo.lon', position.coords.longitude);
+                    console.log("Location changed: " + position.coords.longitude + " " + position.coords.latitude);
+                });*/
+            } else {
+              /* geolocation IS NOT available */
+              console.log("geolocation not available");
+            }
         },
         isAuthenticated: function() {
             return Session.data.authenticated;

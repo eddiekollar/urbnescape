@@ -1,6 +1,9 @@
-<div class="container" ng-controller="PlacesCtrl" class="add-place-form">
-    <h1>{{ category }}S</h1>
-    <div>
+<div class="container" ng-controller="PlacesCtrl">
+    <img class="img-responsive place-img" src="/public/img/x2/image_parks@2x.png" ng-show="category == 'PARK'"/>
+    <img class="img-responsive place-img" src="/public/img/x2/image_paths@2x.png" ng-show="category == 'PATH'"/>
+    <img class="img-responsive place-img" src="/public/img/x2/image_view@2x.png" ng-show="category == 'VIEW'"/>
+    <img class="img-responsive place-img" src="/public/img/x2/image_solitude@2x.png" ng-show="category == 'SOLITUDE'"/>
+    <div class="add-place-form">
         <div class="pull-right addplace-btn" ng-show="authenticated">
             <a class="btn btn-warning" ng-click="addPlacePage()">
                     KNOW OF OTHER PLACES?
@@ -10,12 +13,12 @@
         <div ng-repeat="place in places">
             <div class="well col-12">
                 <div ng-click="getDetails(place)">
-                    <p class="col-offset-3">{{ place.name }}</p>
-                    <p class="col-offset-3">{{ place.description }}</p>
-                    <p class="col-offset-3">{{ place.location }}</p>
+                    <p class="col-sm-offset-3">{{ place.name }}</p>
+                    <p class="col-sm-offset-3">{{ place.description }}</p>
+                    <p class="col-sm-offset-3">{{ place.location }}</p>
                 </div>
-                <div class="col-xs-3">
-                    <button id="btn" class="btn btn-default" ng-show="authenticated" ng-click="">
+                <div class="col-xs-3" ng-show="authenticated">
+                    <button id="btn" class="btn btn-default" ng-click="">
                         <span favorite-button class="glyphicon glyphicon-heart" ></span>
                     </button>
                 </div>
