@@ -74,6 +74,9 @@ body {
 #map {
     height: 300px;
     margin: 30px 0;
+    border: solid;
+    border-width: 1px;
+    border-color: #cccccc;
 }
 
 a, p{

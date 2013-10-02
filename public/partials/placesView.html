@@ -12,17 +12,24 @@
         </div>
         <div ng-repeat="place in places">
             <div class="well col-12">
-                <div ng-click="getDetails(place)">
-                    <p class="col-sm-offset-3">{{ place.name }}</p>
-                    <p class="col-sm-offset-3">{{ place.description }}</p>
-                    <p class="col-sm-offset-3">{{ place.location }}</p>
+                <div class="row">
+                    <div class="col-xs-3 col-sm-3 col-md-3">
+                        <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive">
+                    </div>
+                    <div class="col-xs-9" ng-click="getDetails(place)">
+                        <p>{{ place.name }}</p>
+                        <p>{{ place.description }}</p>
+                        <p>{{ place.location }}</p>
+                    </div>
                 </div>
-                <div class="col-xs-3" ng-show="authenticated">
-                    <button id="btn" class="btn btn-default" ng-click="">
-                        <span favorite-button class="glyphicon glyphicon-heart" ></span>
-                    </button>
-                </div>
-                <p>
+                <div class="row">
+                    <p>
+                    <div class="col-xs-3" ng-show="authenticated">
+                        <button id="btn" class="btn btn-default" ng-click="">
+                            <span favorite-button class="glyphicon glyphicon-heart" ></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-1" ng-hide="authenticated"></div>
                     <div class="col-xs-3">{{place.geoData.distance | number}} mi</div>
                     <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div>
                     <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div>

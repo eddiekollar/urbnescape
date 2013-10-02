@@ -109,12 +109,14 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
 
             $http.post('/-/api/v1/places', {place: $scope.place, review: $scope.review}).
                 success(function(data) {
-
+                    $scope.place = data;
+                    Session.place = data;
             }).error(function(error) {
+                    console.log(error);
                     $scope.errorMessage = error.message;
                 });
 
-            $location.path('/placesView');
+            $location.path('/placeDetailsView');
         }else
             window.alert("Add something on the map");
     };
@@ -207,6 +209,15 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
                 }).error(function(error) {
                     console.log(error);
                 });
+            for(var i = 0; i < $scope.reviews.length; i++){
+                if ($scope.reviews[i]._id === $scope.myReview._id) {
+                    console.log("Found it. Reviews: " + $scope.reviews.length);
+                    $scope.reviews.splice(i, 1);
+                    console.log("Removed it. Reviews: " + $scope.reviews.length);
+                    break;
+                }
+            }
+
             $scope.myReview = {};
             $scope.needsReview = false;
             $scope.hasReview = false;
@@ -295,7 +306,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
     //redo this: default to users location
     var latLng = new L.LatLng(0, 0);
 
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/997/256/{z}/{x}/{y}.png',
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/96818/256/{z}/{x}/{y}.png',
     cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
     map = new L.Map('map', {layers: [cloudmade], center: latLng, zoom: 14 });
 

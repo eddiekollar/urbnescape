@@ -18,12 +18,10 @@ var app = exports.app = express();
 var logger   = require('./lib/logging')(app.settings.env);
 
 app.configure(function(){
-    app.set('client-facebook-signup-path', '/facebook?action=signup');
-    app.set('client-facebook-signin-path', '/facebook?action=signin');
     app.set('dbUrl', config.db[app.settings.env]);
      var mongodb = mongoose.connect(app.get('dbUrl'),{server:{poolSize:2}});
     app.use(express.logger('dev'));
-    //app.use(express.compress());
+    app.use(express.compress());
     app.use(express.bodyParser());
     app.use(express.favicon());
     app.use(express.methodOverride());

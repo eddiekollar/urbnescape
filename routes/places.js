@@ -66,20 +66,23 @@ exports.findAll = function(req, res) {
 exports.addPlace = function(req, res) {
     var place = req.body.place;
     var review = req.body.review;
-
     new Place(place).save(function (err, p) {
         if (err){
             res.send(400, err);
         }
+        if(!p){
+            res.send(400, {});
+        }if(p){
+            review.placeId = p.id;
+            new Review(review).save(function (err, r){
+                if (err){
+                    console.log("Review error: " + err);
+                    //res.send(400, err);
+                }
+            });
 
-        review.placeId = p.id;
-        new Review(review).save(function (err, r){
-            if (err){
-                res.send(400, err);
-            }
-        });
-
-        res.send(201, p);
+            res.send(201, p);
+        }
     });
 
 };
