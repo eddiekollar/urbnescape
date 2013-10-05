@@ -1,9 +1,8 @@
 
-var fs = require('fs')
-    , path = require('path')
-    , haversine = require('../utils/haversine.js')
-    , Place = require('../models/place.js')
-    , Review = require('../models/review.js');
+var Place = require('../models/place.js')
+    , user = require('../models/user.js').User
+    , Review = require('../models/review.js')
+    , haversine = require('../utils/haversine.js');
 
 var createDistFunc = function(req){
     return function(obj){
@@ -46,10 +45,14 @@ exports.findByCategory = function(req, res) {
     }
 
     query.exec(function (err, places) {
-        if (err) console.log(err);
-        places = places.map(calcDistance);
-        places.sort(compare);
-        res.send(places);
+        if (err){
+            console.log(err);
+            res.send(400, err)
+        }else{
+            places = places.map(calcDistance);
+            places.sort(compare);
+            res.send(places);
+        }
     });
 };
 
@@ -80,9 +83,25 @@ exports.addPlace = function(req, res) {
                     //res.send(400, err);
                 }
             });
-
             res.send(201, p);
         }
     });
+};
 
+exports.favoritesByUserId = function(req, res) {
+    user.favoritesIds(req.user, function(err, f){
+        if(err){
+            res.send(400, err);
+        }else{
+            var query = Place.find({}).select('-reviews').where('_id').in(f);
+            query.exec(function (err, places) {
+                if (err) {
+                    console.log(err);
+                    res.send(400, err);
+                }else{
+                    res.send(places);
+                }
+            });
+        }
+    });
 };

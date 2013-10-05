@@ -20,7 +20,8 @@ angular.module('urbnEscape.services', []).
         },
         user: {
             id: 0,
-            username:''
+            username:'', 
+            favorites: []
         },
         setLocation: function() {
             if ("geolocation" in navigator) {

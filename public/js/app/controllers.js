@@ -9,8 +9,6 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
         navigator.geolocation.getCurrentPosition(function(position) {
             $cookieStore.put('geo.lat', position.coords.latitude);
             $cookieStore.put('geo.lon', position.coords.longitude);
-
-            console.log("Original location: " + position.coords.longitude + " " + position.coords.latitude);
         });
         /*
         watchID = navigator.geolocation.watchPosition(function(position) {
@@ -124,6 +122,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
   .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
     //Get data from server to list out places
     $scope.category = Session.currentCategory;
+    $scope.hasCategory = true;
 
     $http.get('/-/api/v1/places/category/'+$scope.category.toLowerCase())
         .success(function(data){
@@ -140,19 +139,14 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
     };
 
     if($rootScope.authenticated){
-        $scope.myFavorites = [];
-        $http.get('/-/api/v1/favorites/ids/' + $scope.user.id)
+        $http.get('/-/api/v1/favorites/ids/')
             .success(function(data){
                 if(typeof data !== 'undefined'){
-                    $scope.myFavorites = data;
+                    Session.user.favorites = data;
                 }
             }).error(function(error) {
                 console.log(error);
             });
-
-        $scope.inFavorites = function(id) {
-            return ($scope.myFavorites.indexOf(id) !== -1);
-        };
     }
   }])
   .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
@@ -322,5 +316,34 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
             var finishMarker = L.marker(latLngs[latLngs.length - 1]).addTo(map);
         }
 
+    };
+}]).controller('FavoritesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
+    $scope.hasCategory = false;
+
+    $http.get('/-/api/v1/places/favorites/me/')
+        .success(function(data){
+            $scope.places = data;
+        }).error(function(error){
+            console.log(error);
+        });
+
+    $http.get('/-/api/v1/favorites/ids/')
+        .success(function(data){
+            Session.user.favorites = data;
+        }).error(function(error) {
+            console.log(error);
+        });
+}]).controller('PlaceCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
+    $scope.getDetails = function(place) {
+        Session.place = place;
+        $location.path('/placeDetailsView');
+    };
+
+    $scope.removePlace = function(id) {
+        for(var p in $scope.places){
+            if($scope.places[p]._id === id){
+                delete $scope.places[p];
+            }
+        }
     };
 }]);

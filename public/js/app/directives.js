@@ -167,52 +167,107 @@ angular.module('urbnEscape.directives', []).
         }
     }
 }])
-    .directive('favoriteButton', ['$rootScope', '$http', function($rootScope, $http) {
+    .directive('favoriteButton', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
     return {
         restrict: 'A',
+        transclude: true,
         scope: {
-          isfavorite: '@'
+          placeId: '='
         },
-        link: function(scope, element, attrs, ctrl) {
-            var inFavorites = scope.$parent.$parent.inFavorites;
-            var placeId = scope.$parent.place._id
+        controller: function($scope, $element, Session){
+            $scope.changed = false;
+            $scope.isFavorite = function(){
+                return (Session.user.favorites.indexOf($scope.placeId) !== -1);
+            };
 
-            if(inFavorites(placeId)){
-                element.addClass('favorite');
-                element.removeClass('nofavorite');
-            }else{
-                element.addClass('nofavorite');
-                element.removeClass('favorite');
-            }
+            $scope.changeStatus = function(){
+                if(!$scope.isFavorite()){
+                    $http.post('/-/api/v1/favorites', {'placeId': $scope.placeId})
+                        .success(function(data){
+                            Session.user.favorites.push($scope.placeId);
+                            $scope.changed = true;
+                        })
+                        .error(function(error) {
+                            console.log(error);
+                        });
+                }else {
+                    $http.delete('/-/api/v1/favorites/me/' + $scope.placeId)
+                        .success(function(data){
+                            var indx = Session.user.favorites.indexOf($scope.placeId);
+                            if(indx !== -1){
+                                Session.user.favorites.splice(indx, 1);
+                            }
+                            if(!$scope.$parent.hasCategory){
+                                $scope.$parent.removePlace($scope.placeId);
+                            }
+                            $scope.changed = false;
+                        })
+                        .error(function(error) {
+                            console.log(error);
+                        });
 
-            element.bind('click', function(evt) {
-                if(typeof placeId !== 'undefined'){
-                    if(! inFavorites(placeId)){
-                        element.addClass('favorite');
-                        element.removeClass('nofavorite');
-                        $http.post('/-/api/v1/favorites', {'userId': $rootScope.user.id, 'placeId': placeId})
-                            .success(function(data){
-                                scope.$parent.$parent.myFavorites.push(placeId);
-                            })
-                            .error(function(error) {
-                                console.log(error);
-                            });
-                    }else if(inFavorites(placeId)){
-                        element.addClass('nofavorite');
-                        element.removeClass('favorite');
-                        $http.delete('/-/api/v1/favorites/' + $rootScope.user.id + '/' + placeId)
-                            .success(function(data){
-                                var indx = scope.$parent.$parent.myFavorites.indexOf(placeId);
-                                if(indx !== -1){
-                                    scope.$parent.$parent.myFavorites.splice(indx, 1);
-                                }
-                            })
-                            .error(function(error) {
-                                console.log(error);
-                            });
-                    }
                 }
+            };
+        },
+        link: function(scope, element){
+            if(scope.isFavorite()){
+                element.children().addClass('favorite');
+            }else{
+                element.children().addClass('nofavorite');
+            }
+            element.bind('click', function(evt){
+                scope.changeStatus();
+                console.log(scope);
             });
+            scope.$watch('changed', function(newVal, oldVal) {
+                if(scope.isFavorite()){
+                    element.children().addClass('favorite');
+                    element.children().removeClass('nofavorite');
+                }else{
+                    element.children().addClass('nofavorite');
+                    element.children().removeClass('favorite');
+                }
+            }, true);
         }
-    }
+    };
+}]).directive('placeDiv', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
+        var placeTemplate = '<div class="well col-12" ng-controller="PlaceCtrl" ng-transclude> \
+                <div class="row"> \
+                    <div class="col-xs-3 col-sm-3 col-md-3"> \
+                        <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive"> \
+                    </div> \
+                    <div class="col-xs-9" ng-click="getDetails(place)"> \
+                        <p>{{ place.name }}</p> \
+                        <p>{{ place.description }}</p> \
+                        <p>{{ place.location }}</p> \
+                    </div> \
+                </div> \
+                <div class="row"> \
+                    <p> \
+                    <div class="col-xs-3" ng-show="authenticated"> \
+                        <button favorite-button place-id="place._id" class="btn btn-default" ng-click="favorite()" ng-transclude> \
+                            <span class="glyphicon glyphicon-heart" ></span> \
+                        </button> \
+                    </div> \
+                    <div class="col-xs-1" ng-hide="authenticated"></div> \
+                    <div class="col-xs-3">{{place.geoData.distance | number}} mi</div> \
+                    <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div> \
+                    <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div> \
+                    </p> \
+                </div> \
+            </div>';
+        return {
+        restrict: 'A',
+        replace: true,
+        require: '^ngModel',
+        template: placeTemplate,
+        transclude: true,
+        link: function(scope, element, attrs){
+            scope.$watch(attrs.ngModel, function(oldVal, newVal){
+                if (typeof oldVal === 'undefined' && typeof newVal === 'undefined') {
+                    element.replaceWith('');
+                }
+            }, true);
+        }
+    };
 }]);

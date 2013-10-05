@@ -1,27 +1,22 @@
 'use strict';
 
-/**
- * User API Routes.
- */
+var user = require('../models/user').User;
 
-var user = require('../models/user');
-
-// GET */users
 exports.list = function (req, res) {
+    //Implement for admins
     res.send('not implemented');
 };
 
-// PUT */user
 exports.create = function (req, res) {
     // Create a new user
     var password = req.body.password;
-    user.User.createFromProfile(req.body, function (err, u) {
+    user.createFromProfile(req.body, function (err, u) {
         if (err) {
             console.log(err);
             return res.send(400, err);
         }
 
-        user.User.setPassword(u.id, password, function(err, u) {
+        user.setPassword(u.id, password, function(err, u) {
              if (err) {
                  console.log(err);
                 return res.send(400, err);
@@ -35,15 +30,12 @@ exports.create = function (req, res) {
              });
              return res.send(201, u.getProfile());
         });
-
-        //return res.send(201, null);
     });
 };
 
-// GET */users/{id}
 exports.read = function (req, res) {
     // get the user by the user id.
-    user.User.findById(req.params.userId, function (err, u) {
+    user.findById(req.params.userId, function (err, u) {
         if (err) {
             return res.send(400, err);
         }
@@ -52,12 +44,11 @@ exports.read = function (req, res) {
     });
 };
 
-// PUT */users/{id}
 exports.update = function (req, res) {
     if (!req.user || (String(req.user) !== String(req.body.userId))) {
         return res.send(403); // forbidden
     }
-    user.User.update(req.user, req.body.user, function (err, u) {
+    user.update(req.user, req.body.user, function (err, u) {
         // send the found user back to the client
         if (err) {
             return res.send(400, err);
@@ -70,7 +61,6 @@ exports.update = function (req, res) {
     });
 };
 
-// DELETE */users/{id}
 exports.delete = function (req, res) {
     // get the user by the user id.
     user.delete(req.params.userId, function (err) {
@@ -79,7 +69,6 @@ exports.delete = function (req, res) {
     });
 };
 
-// GET */users/me
 exports.current = function (req, res) {
     console.log(req.user);
     // if there is no userId return not found 401 Unauthorized
@@ -88,7 +77,7 @@ exports.current = function (req, res) {
         return res.send(401); // Unauthorized
     }*/
     // get the user by the user id stored in the session
-    user.User.findById(req.user, function (err, u) {
+    user.findById(req.user, function (err, u) {
         if (err) {
             return res.send(400, err);
         }
@@ -102,7 +91,7 @@ exports.current = function (req, res) {
 
 exports.unique = function (req,res) {
     if(req.params.uniqueField == 'username'){
-        user.User.findOne({'profile.username' : req.body.field.toLowerCase()}, function(err, u){
+        user.findOne({'profile.username' : req.body.field.toLowerCase()}, function(err, u){
             if(err) {
                 return res.send(401, err);
             }
@@ -114,7 +103,7 @@ exports.unique = function (req,res) {
             }
         });
     }else if(req.params.uniqueField == 'email'){
-        user.User.findOne({'profile.email' : req.body.field.toLowerCase()}, function(err, u){
+        user.findOne({'profile.email' : req.body.field.toLowerCase()}, function(err, u){
             if(err) {
                 return res.send(401, err);
             }
@@ -129,24 +118,19 @@ exports.unique = function (req,res) {
 };
 
 exports.favoritesIds = function(req, res) {
-    user.User.findById(req.params.userId, function(err, u){
+    user.favoritesIds(req.user, function(err, f){
         if(err) {
             return res.send(401, err);
-        }
-        if(!u) {
-            return res.send([]);
-        }
-        if(u) {
-            return res.send(u.favorites);
+        }else{
+            return res.send(f);
         }
     });
 };
 
 exports.addFavorite = function(req, res) {
-    var userId = req.body.userId;
     var placeId = req.body.placeId;
 
-    user.User.findById(userId, function(err, u){
+    user.findById(req.user, function(err, u){
         if(err) {
             return res.send(401, err);
         }
@@ -170,10 +154,9 @@ exports.addFavorite = function(req, res) {
 };
 
 exports.deleteFavorite = function(req, res){
-    var userId = req.params.userId;
     var placeId = req.params.placeId;
 
-    user.User.findById(userId, function(err, u){
+    user.findById(req.user, function(err, u){
         if(err) {
             return res.send(401, err);
         }

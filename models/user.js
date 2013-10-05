@@ -155,6 +155,17 @@ userSchema.statics.authenticate = function (userId, pass, fn) {
     });
 };
 
+userSchema.statics.favoritesIds = function(userId, fn) {
+    User.findById(userId, function(err, u){
+        if(!u) {
+            fn(err, []);
+        }
+        else {
+            fn(err, u.favorites);
+        }
+    });
+};
+
 userSchema.methods.toJSON = function () {
     var obj = this.toObject();
     return obj;
