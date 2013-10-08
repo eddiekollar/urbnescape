@@ -31,15 +31,14 @@
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+    <div ng-include data-src="'/public/includes/nav.html'"></div>
     <div class="container-narrow">
-
-        <div ng-include data-src="'/public/includes/nav.html'"></div>
         <div ng-view></div>
         <div ng-include data-src="'/public/includes/footer.html'"></div>
     </div>
     <!-- AngularJS library and app code -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-cookies.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular-cookies.js"></script>
     <script src="/public/js/app/app.js"></script>
     <script src="/public/js/app/services.js"></script>
     <script src="/public/js/app/controllers.js"></script>

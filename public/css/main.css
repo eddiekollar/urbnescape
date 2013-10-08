@@ -47,7 +47,14 @@ body {
 .container-narrow {
     margin: 0 auto;
     max-width: 750px;
+    padding-top: 90px;    
 }
+
+.container-nav {
+    max-width: 750px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
 .container-narrow > hr {
     margin: 30px 0;
 }
