@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbnEscape.directives', 'urbnEscape.controllers']).
+angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbnEscape.directives', 'urbnEscape.controllers', 'cloudinary', 'urbnEscape.cloudinary']).
   config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
     //$locationProvider.html5Mode(true);
 

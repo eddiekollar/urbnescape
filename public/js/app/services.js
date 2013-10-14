@@ -59,10 +59,28 @@ angular.module('urbnEscape.services', []).
     //Session.updateSession();
     return Session;
 }).factory('User', function($resource) {
-    return $resource('http://localhost\\:3000/user/:userId', {}, {
+    return $resource('/-/api/v1/user/:userId', {}, {
         get: {method:'GET', params:{userId:'@userId'}},
         post: {method:'POST', data: {}},
         update: {method:'PUT', data: {}},
         remove: {method:'DELETE'}
     });
+});
+
+angular.module('urbnEscape.cloudinary',[])
+.factory('cloudinary', function($http) {
+    return {
+        'getUploadAttrs' : function(tags, cb) {
+        $http.get('/-/api/v1/cloudinary/params/get', {
+            params : {
+                'tstamp' : new Date().getTime(),
+                'tags' : tags
+            }})
+            .success(function(data) {
+                cb(data);
+            }).
+            error(function(data, status, headers, config) {
+                alert(status + " | bad");
+            });
+    }}
 });

@@ -4,6 +4,7 @@ var express     = require('express'),
     , mongoose  = require('mongoose')
     , path      = require('path')
     , passport  = require('passport')
+    , cloudinary = require('cloudinary')
     , config    = require('./config')
     , auth      = require('./routes/auth')
     , user      = require('./routes/user')
@@ -16,6 +17,12 @@ var AUTH_URL = '/-/auth';
 
 var app = exports.app = express();
 var logger   = require('./lib/logging')(app.settings.env);
+
+cloudinary.config({
+    cloud_name: 'urbnescape', 
+    api_key: '796197265376295', 
+    api_secret: 'Xe4jIpLoQglSLyfOGQBNrwQMAcY'
+});
 
 app.configure(function(){
     app.set('dbUrl', config.db[app.settings.env]);
@@ -91,13 +98,28 @@ app.get(API_BASE_URL + '/reviews/me/:placeId', ensureAuthenticated, review.findB
 //app.get(API_BASE_URL + '/reviews/me/', review.findAllByUser);
 app.post(API_BASE_URL + '/reviews', ensureAuthenticated, review.create);
 app.put(API_BASE_URL + '/reviews/:reviewId', ensureAuthenticated, review.update);
-app.delete(API_BASE_URL + '/reviews/:reviewId', review.delete);
+app.delete(API_BASE_URL + '/reviews/:reviewId', ensureAuthenticated, review.delete);
 
 //API calls for favorites
 //app.get(API_BASE_URL + '/favorites', ensureAuthenticated, user.favorites);
 app.get(API_BASE_URL + '/favorites/ids/', ensureAuthenticated, user.favoritesIds);
 app.post(API_BASE_URL + '/favorites', ensureAuthenticated, user.addFavorite);
 app.delete(API_BASE_URL + '/favorites/me/:placeId', ensureAuthenticated, user.deleteFavorite);
+
+app.get(API_BASE_URL + '/cloudinary/params/get', ensureAuthenticated, function(req,res){
+    var data = {};
+    var params = cloudinary.uploader.direct_upload('http://' + req.header('host') + '/cloudinary_cors.html',req.query).hidden_fields;
+    var url = cloudinary.uploader.upload_url();
+    data.params = params;
+    data.url = url;
+    res.send(data);
+});
+
+app.delete(API_BASE_URL + '/cloudinary/image/:imageId', function(req, res){
+    cloudinary.uploader.destroy(req.params.imageId, function(result) {
+        res.send(result);
+    });
+});
 
 /*
  app.get(API_BASE_URL + '/favorites/:favoriteId', favorites.getCountById);

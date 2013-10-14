@@ -12,7 +12,8 @@
     "passport-facebook": "~1.0.1",
     "passport-local": "~0.1.6",
     "winston": "~0.7.2",
-    "winston-mongodb": "~0.4.2"
+    "winston-mongodb": "~0.4.2",
+    "cloudinary": "~1.0.5"
   },
   "devDependencies": {},
   "scripts": {

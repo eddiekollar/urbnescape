@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-angular.module('urbnEscape.controllers', ['ngCookies']).
-  controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', '$cookieStore', 'Session', function($rootScope, $scope, $http, $location, $cookieStore, Session){
+angular.module('urbnEscape.controllers', ['ngCookies'])
+.controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', '$cookieStore', 'Session', function($rootScope, $scope, $http, $location, $cookieStore, Session){
     if ("geolocation" in navigator) {
       /* geolocation is available */
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -46,8 +46,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
                 $scope.errorMessage = error.message;
             });
     };
-  }])
-  .controller('LogInCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+}]).controller('LogInCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     $scope.errorMessage = '';
 
     $scope.logIn = function(){
@@ -81,8 +80,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
                 $scope.errorMessage = error.message;
             });
     };
-    }])
-  .controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
+}]).controller('AddPlaceCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', 'cloudinary', function($rootScope, $scope, $http, $location, Session, cloudinary) {
     //Initialize form data
     if(!$rootScope.authenticated){
         $location.path('/placesView');
@@ -118,8 +116,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
         }else
             window.alert("Add something on the map");
     };
-  }])
-  .controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
+}]).controller('PlacesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
     //Get data from server to list out places
     $scope.category = Session.currentCategory;
     $scope.hasCategory = true;
@@ -148,8 +145,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
                 console.log(error);
             });
     }
-  }])
-  .controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
+}]).controller('PlaceDetailsCtrl', ['$rootScope', '$scope', '$http', '$location', 'Session', function($rootScope, $scope, $http, $location, Session) {
     $scope.originalObj = {};
     $scope.place = Session.place;
     $scope.needsReview = false;
@@ -251,8 +247,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
         }).error(function(error) {
             console.log(error);
         });
-  }])
-  .controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+}]).controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     if(!$rootScope.authenticated){
         $location.path('/placesView');
     }
@@ -293,8 +288,7 @@ angular.module('urbnEscape.controllers', ['ngCookies']).
 
         $scope.setEditMode();
     };
-  }])
-  .controller('MapCtrl', ['$scope', '$http', 'Session', function($scope, $http, Session) {
+}]).controller('MapCtrl', ['$scope', '$http', 'Session', function($scope, $http, Session) {
     $scope.place = Session.place;
 
     //redo this: default to users location

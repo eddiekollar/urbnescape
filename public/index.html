@@ -26,9 +26,17 @@
     <!-- External library references -->
     <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
     <script src="/public/js/vendor/leaflet.draw.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/vendor/jquery.ui.widget.js"></script>
+    <script src="/public/js/vendor/jquery-file-upload/jquery.fileupload.js"></script>
+    <script src="/public/js/vendor/jquery.cloudinary.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/public/css/vendor/jquery.fileupload.css">
+    <link rel="stylesheet" href="/public/css/vendor/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="/public/css/vendor/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="/public/css/vendor/jquery.fileupload-ui-noscript.css"></noscript>
 </head>
 <body>
     <div ng-include data-src="'/public/includes/nav.html'"></div>
@@ -39,6 +47,16 @@
     <!-- AngularJS library and app code -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular-cookies.js"></script>
+    <script>CLOUDINARY_CONFIG = {"api_key": "796197265376295", "cloud_name": "urbnescape"};</script>
+    <script src="/public/js/vendor/angular.cloudinary.js"></script>
+
+    <script src="/public/js/vendor/canvas-to-blob.min.js"></script>
+    <script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js"></script>
+    <script src="/public/js/vendor/jquery-file-upload/jquery.fileupload-process.js"></script>
+    <script src="/public/js/vendor/jquery-file-upload/jquery.fileupload-image.js"></script>
+    <script src="/public/js/vendor/jquery-file-upload/jquery.fileupload-validate.js"></script>
+    <script src="/public/js/vendor/jquery-file-upload/jquery.fileupload-angular.js"></script>
+
     <script src="/public/js/app/app.js"></script>
     <script src="/public/js/app/services.js"></script>
     <script src="/public/js/app/controllers.js"></script>

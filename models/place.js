@@ -13,13 +13,18 @@ var placeSchema = new Schema({
                     lon:    {type: Number, default: 0.0}}
                 ]  
     },
-    crowdScore: {type: Number, default: 0},
-    quietlevelScore: {type: Number, default: 0},
-    category:   {type: String, default: 'VIEW'},
-    description: {type: String, default: ''},
-    reviews:    [{type: Schema.Types.ObjectId, ref: 'Review'}],
-    createdDate: {type: Date, default: Date.now},
-    createdBy: {type: Schema.Types.ObjectId, ref: 'User'}
+    crowdScore:         {type: Number, default: 0},
+    quietlevelScore:    {type: Number, default: 0},
+    category:           {type: String, default: 'VIEW'},
+    description:        {type: String, default: ''},
+    reviews:            [{type: Schema.Types.ObjectId, ref: 'Review'}],
+    image:      {
+        id:     { type: String, default: ''},
+        format: { type: String, default: ''},
+        version: { type: String, default: ''}
+    }, 
+    createdDate:        {type: Date, default: Date.now},
+    createdBy:          {type: Schema.Types.ObjectId, ref: 'User'}
 });
 
 module.exports = mongoose.model('Place', placeSchema);

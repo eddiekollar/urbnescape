@@ -3,8 +3,8 @@
 /* Directives */
 
 
-angular.module('urbnEscape.directives', []).
-  directive('sap', [function() {
+angular.module('urbnEscape.directives', [])
+.directive('sap', [function() {
     return {
         restrict: 'E',
         replace: true,
@@ -134,8 +134,7 @@ angular.module('urbnEscape.directives', []).
                 });
         }
     }
-}])
-  .directive('ensureUnique', ['$http', '$timeout', function($http, $timeout) {
+}]).directive('ensureUnique', ['$http', '$timeout', function($http, $timeout) {
     var checking = null;
     return {
         require: 'ngModel',
@@ -166,8 +165,7 @@ angular.module('urbnEscape.directives', []).
             });
         }
     }
-}])
-    .directive('favoriteButton', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
+}]).directive('favoriteButton', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
     return {
         restrict: 'A',
         transclude: true,
@@ -231,43 +229,129 @@ angular.module('urbnEscape.directives', []).
         }
     };
 }]).directive('placeDiv', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
-        var placeTemplate = '<div class="well col-12" ng-controller="PlaceCtrl" ng-transclude> \
-                <div class="row"> \
-                    <div class="col-xs-3 col-sm-3 col-md-3"> \
-                        <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive"> \
-                    </div> \
-                    <div class="col-xs-9" ng-click="getDetails(place)"> \
-                        <p>{{ place.name }}</p> \
-                        <p>{{ place.description }}</p> \
-                        <p>{{ place.location }}</p> \
-                    </div> \
+    var placeTemplate = '<div class="well col-12" ng-controller="PlaceCtrl" ng-transclude> \
+            <div class="row"> \
+                <div class="col-xs-3 col-sm-3 col-md-3"> \
+                    <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive"> \
                 </div> \
-                <div class="row"> \
-                    <p> \
-                    <div class="col-xs-3" ng-show="authenticated"> \
-                        <button favorite-button place-id="place._id" class="btn btn-default" ng-click="favorite()" ng-transclude> \
-                            <span class="glyphicon glyphicon-heart" ></span> \
-                        </button> \
-                    </div> \
-                    <div class="col-xs-1" ng-hide="authenticated"></div> \
-                    <div class="col-xs-3">{{place.geoData.distance | number}} mi</div> \
-                    <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div> \
-                    <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div> \
-                    </p> \
+                <div class="col-xs-9" ng-click="getDetails(place)"> \
+                    <p>{{ place.name }}</p> \
+                    <p>{{ place.description }}</p> \
+                    <p>{{ place.location }}</p> \
                 </div> \
-            </div>';
-        return {
+            </div> \
+            <div class="row"> \
+                <p> \
+                <div class="col-xs-3" ng-show="authenticated"> \
+                    <button favorite-button place-id="place._id" class="btn btn-default" ng-click="favorite()" ng-transclude> \
+                        <span class="glyphicon glyphicon-heart" ></span> \
+                    </button> \
+                </div> \
+                <div class="col-xs-1" ng-hide="authenticated"></div> \
+                <div class="col-xs-3">{{place.geoData.distance | number}} mi</div> \
+                <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div> \
+                <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div> \
+                </p> \
+            </div> \
+        </div>';
+    return {
         restrict: 'A',
         replace: true,
         require: '^ngModel',
         template: placeTemplate,
         transclude: true,
         link: function(scope, element, attrs){
+            if(scope.place.image.id !== ''){
+                element.find('img').replaceWith($.cloudinary.image(scope.place.image.id, 
+                          { format: scope.place.image.format, version: scope.place.image.version, 
+                            crop: 'fill', width: 100, height: 100 }));
+                    element.find('img').addClass('img-circle');
+            }
             scope.$watch(attrs.ngModel, function(oldVal, newVal){
                 if (typeof oldVal === 'undefined' && typeof newVal === 'undefined') {
                     element.replaceWith('');
                 }
             }, true);
+        }
+    };
+}]).directive('addPlacePicDiv', ['$rootScope', '$http', 'Session', 'cloudinary', function($rootScope, $http, Session, cloudinary) {
+    var placePicTemplate = '<div ng-transclude> \
+                              <div class="row"> \
+                                <img name="preview" id="preview" src="http://placehold.it/100x100" alt="..." class="img-circle"> \
+                              </div> \
+                              <div class="row"> \
+                              <button class="btn btn-success fileinput-button btn-xs" ng-hide="hasImage"> \
+                              <span>Add a picture</span> \
+                              <div id="photo-upload-btn" class="photo-upload-btn" cl-upload data="cloudinaryData"/> \
+                              </button> \
+                              <button class="btn btn-danger fileinput-button btn-xs" ng-show="hasImage" ng-click="removePic()">Remove picture</button> \
+                              </div> \
+                            </div>';
+    return {
+        restrict: 'A',
+        replace: true,
+        template: placePicTemplate,
+        transclude: true,
+        controller: function($scope, $element, Session){
+            $scope.cloudinaryData = {};
+            $scope.hasImage = false;
+            $scope.imageUploadResult = {};
+
+            var tags = ['PLACE', Session.currentCategory];
+
+            cloudinary.getUploadAttrs(tags, function(data) {
+
+                $scope.cloudinaryData = {
+                    url: data.url,
+                    formData: data.params,
+                    progress : function(e, cloudinaryResponse) { 
+                    },
+                    start : function(e, cloudinaryResponse){
+                        //start progress spinner
+                    },
+                    done : function(e, cloudinaryResponse) {
+                        //end spinner
+                        console.log('Done: ');
+                        $scope.hasImage = true;
+                        $scope.imageUploadResult = cloudinaryResponse.result;
+                        $scope.place.image.id = cloudinaryResponse.result.public_id;
+                        $scope.place.image.format = cloudinaryResponse.result.format;
+                        $scope.place.image.version = cloudinaryResponse.result.version;
+                        console.log(cloudinaryResponse);
+                    }
+                };
+
+                console.log($scope.cloudinaryData);
+            });
+
+            $scope.removePic = function(){
+                //call image delete
+                $scope.hasImage = false;
+                $http.delete('/-/api/v1/cloudinary/image/' + $scope.imageUploadResult.public_id)
+                    .success(function(data){
+                        console.log(data);
+                    })
+                    .error(function(error) {
+                        console.log(error);
+                    });
+                $scope.imageUploadResult = {};
+                $scope.place.imageId = '';
+            };
+        },
+        link: function(scope, element, attrs){
+            scope.$watch('hasImage', function(newVal, oldVal) {
+                if(scope.hasImage){
+                    console.log(element);
+                    console.log(element.find('img'));
+                    element.find('img').replaceWith($.cloudinary.image(scope.imageUploadResult.public_id, 
+                          { format: scope.imageUploadResult.format, version: scope.imageUploadResult.version, 
+                            crop: 'fill', width: 100, height: 100 }));
+                    element.find('img').addClass('img-circle');
+                }else{
+                    element.find('img').replaceWith('<img name="preview" id="preview" src="http://placehold.it/100x100" alt="..." class="img-circle"> ');
+                }
+            });
+            //On cancel delete image from Cloudinary
         }
     };
 }]);

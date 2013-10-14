@@ -1,23 +1,5 @@
 <div class="container">
-
-    <div class="well col-12" ng-controller="PlaceDetailsCtrl">
-        <div class="row">
-            <div class="col-xs-3">
-                <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive">
-            </div>
-            <div class="col-xs-9">
-                <p>{{ place.name }}</p>
-                <p>{{ place.location }}</p>
-                <p>{{ place.description }}</p>
-            </div>
-        </div>
-        <p>
-            <div class="col-xs-1"></div>
-            <div class="col-xs-3"><span ng-bind="place.geoData.distance | number"></span> mi</div>
-            <div class="col-xs-3">Quiet Level: <span ng-bind="place.quietlevelScore"></span></div>
-            <div class="col-xs-3">Crowd: <span ng-bind="place.crowdScore"></span></div>
-        </p>
-    </div>
+    <div place-div ng-model="place"></div>
 
     <div id="map" class="col-xs-12" ng-controller="MapCtrl"></div>
 
@@ -87,20 +69,9 @@
                                   class="form-control col-xs-11"
                                   placeholder="Add some tips"
                                   ng-model="myReview.tips"
-                                  ng-minlength="2"
-                                  ng-maxlength="512"
-                                  ng-focus
-                                  required></textarea>
+                                  ng-maxlength="512"></textarea>
                         <div class="alert alert-danger"
-                             ng-show="addreview_form.tips.$dirty && addreview_form.tips.$invalid && !addreview_form.tips.$focused">
-                            <small class="error"
-                                   ng-show="addreview_form.tips.$error.required">
-                                Tip is required.
-                            </small>
-                            <small class="error"
-                                   ng-show="addreview_form.tips.$error.minlength">
-                                Tip is required to be at least 2 characters
-                            </small>
+                             ng-show="addreview_form.tips.$dirty && addreview_form.tips.$invalid">
                             <small class="error"
                                    ng-show="addreview_form.tips.$error.maxlength">
                                 Tip cannot be longer than 512 characters
