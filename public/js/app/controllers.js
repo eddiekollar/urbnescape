@@ -89,6 +89,7 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
     $scope.place = {};
     $scope.place.category = Session.currentCategory;
     $scope.place.geoData = {};
+    $scope.place.image = {};
     $scope.review = {quietlevel:1, crowd: 1};
 
     $scope.categories = ['VIEW', 'PARK', 'PATH', 'SOLITUDE'];

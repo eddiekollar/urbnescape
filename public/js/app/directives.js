@@ -82,6 +82,8 @@ angular.module('urbnEscape.directives', [])
 
                 var latLngs = [];
 
+                var url = "";
+
                 function cleanObj(obj) {
                     return {lat: obj.lat, lon: obj.lng};
                 }
@@ -93,8 +95,8 @@ angular.module('urbnEscape.directives', [])
                     marker.on('dragend', function(e){
                         latLngs = [cleanObj(e.target.getLatLng())];
                         scope[attrs.ngModel].geoData.latLngs = latLngs;
-
-                        console.log(scope[attrs.ngModel].geoData.latLngs);
+                        url = GetServiceUrl(latLngs[0]);
+                        GetData(url);
                     });
 
                     layer.options.draggable = true;
@@ -106,9 +108,7 @@ angular.module('urbnEscape.directives', [])
                 scope[attrs.ngModel].geoData.latLngs = latLngs;
                 scope[attrs.ngModel].geoData.layerType = type;
 
-                console.log(scope[attrs.ngModel].geoData.latLngs);
-
-                var url = GetServiceUrl(latLngs[0]);
+                url = GetServiceUrl(latLngs[0]);
                 GetData(url);
             });
 
@@ -332,11 +332,8 @@ angular.module('urbnEscape.directives', [])
                         $scope.place.image.id = cloudinaryResponse.result.public_id;
                         $scope.place.image.format = cloudinaryResponse.result.format;
                         $scope.place.image.version = cloudinaryResponse.result.version;
-                        console.log(cloudinaryResponse);
                     }
                 };
-
-                console.log($scope.cloudinaryData);
             });
 
             $scope.removePic = function(){
