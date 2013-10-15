@@ -10,7 +10,6 @@
 
 /* Space out content a bit */
 body {
-    padding-top: 20px;
     padding-bottom: 20px;
     background-color: #f3f2eb;
     font-family: MuseoSans;
@@ -47,12 +46,7 @@ body {
 .container-narrow {
     margin: 0 auto;
     max-width: 750px;
-    padding-top: 90px;    
-}
-
-.container-nav {
-    max-width: 750px;
-    border-bottom: 1px solid #e5e5e5;
+   
 }
 
 .container-narrow > hr {
@@ -112,6 +106,10 @@ a, p{
 
 textarea.ng-dirty.ng-valid, input.ng-dirty.ng-valid { border:1px solid Green; }
 textarea.ng-dirty.ng-invalid, input.ng-dirty.ng-invalid { border:1px solid Red; }
+
+textarea:disabled{
+    background-color: #e0e0e0;
+}
 
 .favorite {
     color: #ff69b4;

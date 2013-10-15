@@ -89,6 +89,15 @@ angular.module('urbnEscape.directives', [])
                 if (type === 'marker') {
                     editableLayers.clearLayers();
                     latLngs = [cleanObj(layer.getLatLng())];
+                    marker = e.layer;
+                    marker.on('dragend', function(e){
+                        latLngs = [cleanObj(e.target.getLatLng())];
+                        scope[attrs.ngModel].geoData.latLngs = latLngs;
+
+                        console.log(scope[attrs.ngModel].geoData.latLngs);
+                    });
+
+                    layer.options.draggable = true;
                 }else if(type==='polyline'){
                     angular.copy(layer.getLatLngs(), latLngs);
                     latLngs = latLngs.map(cleanObj);
@@ -97,8 +106,14 @@ angular.module('urbnEscape.directives', [])
                 scope[attrs.ngModel].geoData.latLngs = latLngs;
                 scope[attrs.ngModel].geoData.layerType = type;
 
+                console.log(scope[attrs.ngModel].geoData.latLngs);
+
                 var url = GetServiceUrl(latLngs[0]);
                 GetData(url);
+            });
+
+            map.on('dragend', function(e){
+
             });
 
             function onLocationFound(e) {
