@@ -257,12 +257,11 @@ angular.module('urbnEscape.directives', [])
             </div> \
             <div class="row"> \
                 <p> \
-                <div class="col-xs-3" ng-show="authenticated"> \
-                    <button favorite-button place-id="place._id" class="btn btn-default" ng-click="favorite()" ng-transclude> \
+                <div class="col-xs-3" ng-switch on="authenticated"> \
+                    <button favorite-button place-id="place._id" class="btn btn-default" ng-click="favorite()" ng-switch-when="true" ng-transclude> \
                         <span class="glyphicon glyphicon-heart" ></span> \
                     </button> \
                 </div> \
-                <div class="col-xs-1" ng-hide="authenticated"></div> \
                 <div class="col-xs-3">{{place.geoData.distance | number}} mi</div> \
                 <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div> \
                 <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div> \
@@ -294,12 +293,12 @@ angular.module('urbnEscape.directives', [])
                               <div class="row"> \
                                 <img name="preview" id="preview" src="http://placehold.it/100x100" alt="..." class="img-circle"> \
                               </div> \
-                              <div class="row"> \
-                              <button class="btn btn-success fileinput-button btn-xs" ng-hide="hasImage"> \
-                              <span>Add a picture</span> \
-                              <div id="photo-upload-btn" class="photo-upload-btn" cl-upload data="cloudinaryData"/> \
-                              </button> \
-                              <button class="btn btn-danger fileinput-button btn-xs" ng-show="hasImage" ng-click="removePic()">Remove picture</button> \
+                              <div class="row" ng-show="editMode"> \
+                                  <button class="btn btn-success fileinput-button btn-xs" ng-hide="hasImage"> \
+                                  <span>Add a picture</span> \
+                                  <div id="photo-upload-btn" class="photo-upload-btn" cl-upload data="cloudinaryData"/> \
+                                  </button> \
+                                  <button class="btn btn-danger fileinput-button btn-xs" ng-show="hasImage" ng-click="removePic()">Remove picture</button> \
                               </div> \
                             </div>';
     return {
@@ -309,7 +308,7 @@ angular.module('urbnEscape.directives', [])
         transclude: true,
         controller: function($scope, $element, Session){
             $scope.cloudinaryData = {};
-            $scope.hasImage = false;
+            $scope.hasImage = ((typeof $scope.place.image.id !== 'undefined') && ($scope.place.image.id !== '')) || false;
             $scope.imageUploadResult = {};
 
             var tags = ['PLACE', Session.currentCategory];
@@ -355,8 +354,8 @@ angular.module('urbnEscape.directives', [])
                 if(scope.hasImage){
                     console.log(element);
                     console.log(element.find('img'));
-                    element.find('img').replaceWith($.cloudinary.image(scope.imageUploadResult.public_id, 
-                          { format: scope.imageUploadResult.format, version: scope.imageUploadResult.version, 
+                    element.find('img').replaceWith($.cloudinary.image(scope.place.image.id, 
+                          { format: scope.place.image.format, version: scope.place.image.version, 
                             crop: 'fill', width: 100, height: 100 }));
                     element.find('img').addClass('img-circle');
                 }else{
@@ -364,6 +363,70 @@ angular.module('urbnEscape.directives', [])
                 }
             });
             //On cancel delete image from Cloudinary
+        }
+    };
+}]).directive('placeForm', ['$rootScope', '$http', 'Session', 'cloudinary', function($rootScope, $http, Session, cloudinary) {
+    return {
+        restrict: 'A',
+        replace: true,
+        transclude: true,
+        scope: {
+            place: '=',
+            context: '@'
+        },
+        templateUrl: '/public/partials/placeForm.html',
+        controller: function($scope, $element, $attrs){
+            $scope.categories = ['VIEW', 'PARK', 'PATH', 'SOLITUDE'];
+            $scope.editMode = true;
+            //Copy the original place object in case of cancel
+            $scope.originalObj = angular.copy($scope.place);
+
+            if($scope.context === 'placeDetails'){
+                $scope.editMode = false;
+            }
+
+            $scope.delete = function(){
+                //delete place
+            };
+
+            $scope.setEditMode = function(){
+                $scope.editMode = true;
+            };
+
+            $scope.cancel = function() {
+                $scope.editMode = false;
+                $scope.place = $scope.originalObj;
+            };
+
+            $scope.save = function(){
+                //save changes
+                $scope.editMode = false;
+                
+                if(!angular.equals($scope.place, $scope.originalObj)){
+                    $http.put('/-/api/v1/places/', {place: $scope.place}).
+                    success(function(data) {
+                        $scope.place = data;
+                    }).error(function(error) {
+                        $scope.errorMessage = error.message;
+                        console.log(error);
+                    });
+                }
+            };
+        },
+        link: function(scope, element, attrs){
+            if(scope.context === 'placeDetails'){
+                element.find('input').attr('disabled', 'disabled');
+                element.find('textarea').attr('disabled', 'disabled');
+            }
+            scope.$watch('editMode', function(newVal, oldVal){
+                if(newVal){
+                    element.find('input').removeAttr('disabled');
+                    element.find('textarea').removeAttr('disabled');
+                }else{
+                    element.find('input').attr('disabled', 'disabled');
+                    element.find('textarea').attr('disabled', 'disabled');
+                }
+            });
         }
     };
 }]);

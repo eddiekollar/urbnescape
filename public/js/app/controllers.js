@@ -152,6 +152,7 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
     $scope.needsReview = false;
     $scope.hasReview = false;
     $scope.editMode = false;
+    $scope.isAdmin = ($rootScope.authenticated && $rootScope.user.isAdmin) || false;
 
     if(typeof $scope.place._id === 'undefined'){
         $location.path('/placesView');

@@ -81,7 +81,7 @@ app.get(API_BASE_URL + '/user', user.list);
 app.post(API_BASE_URL + '/user', user.create);
 app.get(API_BASE_URL + '/user/me/', ensureAuthenticated, user.current);
 app.get(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.read);
-app.put(API_BASE_URL + '/user/', ensureAuthenticated, user.update);
+app.put(API_BASE_URL + '/user', ensureAuthenticated, user.update);
 app.delete(API_BASE_URL + '/user/:userId', ensureAuthenticated, user.delete);
 
 app.post(API_BASE_URL + '/check/:uniqueField', user.unique);
@@ -91,6 +91,7 @@ app.get(API_BASE_URL + '/places/:placeId', places.findById);
 app.get(API_BASE_URL + '/places/category/:category', places.findByCategory);
 app.post(API_BASE_URL + '/places', ensureAuthenticated, places.addPlace);
 app.get(API_BASE_URL + '/places/favorites/me', ensureAuthenticated, places.favoritesByUserId);
+app.put(API_BASE_URL + '/places', ensureAuthenticated, places.update);
 
 //API calls for reviews
 app.get(API_BASE_URL + '/reviews/:placeId', review.findByPlaceId);
@@ -106,6 +107,7 @@ app.get(API_BASE_URL + '/favorites/ids/', ensureAuthenticated, user.favoritesIds
 app.post(API_BASE_URL + '/favorites', ensureAuthenticated, user.addFavorite);
 app.delete(API_BASE_URL + '/favorites/me/:placeId', ensureAuthenticated, user.deleteFavorite);
 
+//Calls for images
 app.get(API_BASE_URL + '/cloudinary/params/get', ensureAuthenticated, function(req,res){
     var data = {};
     var params = cloudinary.uploader.direct_upload('http://' + req.header('host') + '/cloudinary_cors.html',req.query).hidden_fields;
@@ -114,7 +116,6 @@ app.get(API_BASE_URL + '/cloudinary/params/get', ensureAuthenticated, function(r
     data.url = url;
     res.send(data);
 });
-
 app.delete(API_BASE_URL + '/cloudinary/image/:imageId', function(req, res){
     cloudinary.uploader.destroy(req.params.imageId, function(result) {
         res.send(result);

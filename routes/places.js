@@ -105,3 +105,23 @@ exports.favoritesByUserId = function(req, res) {
         }
     });
 };
+
+exports.update = function(req, res) {
+    var place = req.body.place;
+    var id = req.body.place._id;
+
+    delete(place.__v);
+    delete(place._id);
+    delete(place.createdBy);
+    delete(place.createdDate);
+
+    Place.findByIdAndUpdate(id, place, function(err, p){
+        if(err) {
+            console.log(err);
+            res.send(400, err);
+        }
+        else{
+            res.send(p);
+        }
+    });
+};

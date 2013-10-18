@@ -1,9 +1,12 @@
 <div class="container">
-    <div place-div ng-model="place"></div>
+    <div ng-switch on="isAdmin">
+        <div place-div ng-model="place" ng-switch-when="false"></div>
+        <div place-form context="placeDetails" place="place" ng-transclude ng-switch-when="true"></div>
+    </div>
 
     <div id="map" class="col-xs-12" ng-controller="MapCtrl"></div>
 
-    <div ng-controller="PlaceDetailsCtrl">
+    <div>
         <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">
             <a class="btn btn-warning" ng-click="createReview()">
                 ADD TIP

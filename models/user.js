@@ -31,6 +31,7 @@ var userSchema = new Schema({
     },
     reviews:    [{type: Schema.Types.ObjectId, ref: 'Review'}],
     favorites:    [{type: Schema.Types.ObjectId, ref: 'Place'}],
+    isAdmin:    { type: Boolean, default: false },
     createdAt: Date
 });
 
