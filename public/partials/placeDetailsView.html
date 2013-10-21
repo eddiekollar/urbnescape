@@ -4,9 +4,10 @@
         <div place-form context="placeDetails" place="place" ng-transclude ng-switch-when="true"></div>
     </div>
 
-    <div id="map" class="col-xs-12" ng-controller="MapCtrl"></div>
+    <div map id="map" mode="view" place="place" class="col-xs-12"></div>
 
     <div>
+        <button class="btn btn-success" ng-click="getDirections()">Directions</button>
         <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">
             <a class="btn btn-warning" ng-click="createReview()">
                 ADD TIP

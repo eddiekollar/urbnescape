@@ -4,136 +4,162 @@
 
 
 angular.module('urbnEscape.directives', [])
-.directive('sap', [function() {
+.directive('map', ['$http', 'Session', function($http, Session) {
     return {
-        restrict: 'E',
-        replace: true,
-        template: '<div></div>',
-        link: function(scope, element, attrs) {
-            var marker = L.marker();
+        restrict: 'A',
+        replace: false,
+        transclude: true,
+        scope: {
+            place: '=',
+            mode: '@'
+        },
+        controller: function($scope){
+            //$scope.place = Session.place;
 
             var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/96818/256/{z}/{x}/{y}.png',
-            cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
-            map = new L.Map('map', {layers: [cloudmade], zoom: 14 }),
-            editableLayers = new L.FeatureGroup();
+                cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
+                map = new L.Map('map', {layers: [cloudmade], zoom: 14 }),
+                latLngs = [],
+                path, startMarker, finishMarker,
+                marker = new L.marker();
 
             map.doubleClickZoom.disable();
-            map.addLayer(editableLayers);
-            L.drawLocal.draw.toolbar.buttons.polyline = "Draw a path";
-            L.drawLocal.draw.toolbar.buttons.marker = "Add a place";
 
-            var options = {
-                draw: {
-                    polyline: {
-                        metric: false
-                    },
-                    polygon: false,
-                    circle: false,
-                    rectangle: false
-                },
-                edit: {
-                    featureGroup: editableLayers
+            if($scope.mode === 'view'){
+                latLngs = $scope.place.geoData.latLngs;
+                if($scope.place.geoData.layerType === 'marker'){
+                    marker = L.marker(latLngs[0]).addTo(map);
+                    map.setView(latLngs[0], 14);
+                }else{
+                    path = L.polyline($scope.place.geoData.latLngs).addTo(map);
+                    map.fitBounds(path.getBounds());
+                    startMarker = L.marker(latLngs[0]).addTo(map);
+                    finishMarker = L.marker(latLngs[latLngs.length - 1]).addTo(map);
                 }
-            };
-
-            var drawControl = new L.Control.Draw(options);
-            map.addControl(drawControl);
-
-            map.on('draw:drawstart', function (e) {
-                var type = e.layerType;
-
-                map.removeLayer(marker);
-
-                if(type === 'marker'){
-                }else if(type === 'polyline'){
-                    editableLayers.clearLayers();
-                }
-            });
-
-            var GetServiceUrl = function(latlng) {
-                var parameters = L.Util.extend({
-                    format: 'json',
-                    lat: latlng.lat,
-                    lon: latlng.lon,
-                    zoom: 18,
-                    addressdetails: 1
+            }else if($scope.mode === 'edit'){
+                map.on('locationfound', function(e) {
+                    marker = L.marker(e.latlng).addTo(map);
+                });
+                map.on('locationerror', function(e) {
+                    console.log(e.message);
                 });
 
-                return 'http://nominatim.openstreetmap.org/reverse'
-                    + L.Util.getParamString(parameters);
-            };
+                var editableLayers = new L.FeatureGroup();
+                map.addLayer(editableLayers);
+                L.drawLocal.draw.toolbar.buttons.polyline = "Draw a path";
+                L.drawLocal.draw.toolbar.buttons.marker = "Add a place";
 
-            var GetData = function (url) {
-                $.getJSON(url, function (data) {
-                    try {
-                        //var results = provider.ParseJSON(data);
-                        $('#location').val(data.address.road + " " + data.address.city + ", " + data.address.state);
-                        scope[attrs.ngModel].location = data.address.road + " " + data.address.city + ", " + data.address.state;
+                var options = {
+                    draw: {
+                        polyline: {
+                            metric: false
+                        },
+                        polygon: false,
+                        circle: false,
+                        rectangle: false
+                    },
+                    edit: {
+                        featureGroup: editableLayers
                     }
-                    catch (error) {
-                        alert(error);
-                    }
-                }.bind(this));
-            };
+                };
 
-            map.on('draw:created', function (e) {
-                var type = e.layerType,
-                    layer = e.layer;
+                var drawControl = new L.Control.Draw(options);
+                map.addControl(drawControl);
 
-                var latLngs = [];
-
-                var url = "";
-
-                function cleanObj(obj) {
-                    return {lat: obj.lat, lon: obj.lng};
-                }
-
-                if (type === 'marker') {
-                    editableLayers.clearLayers();
-                    latLngs = [cleanObj(layer.getLatLng())];
-                    marker = e.layer;
-                    marker.on('dragend', function(e){
-                        latLngs = [cleanObj(e.target.getLatLng())];
-                        scope[attrs.ngModel].geoData.latLngs = latLngs;
-                        url = GetServiceUrl(latLngs[0]);
-                        GetData(url);
+                var GetData = function (latlng) {
+                    var parameters = L.Util.extend({
+                        format: 'json',
+                        lat: latlng.lat,
+                        lon: latlng.lon,
+                        zoom: 18,
+                        addressdetails: 1
                     });
 
-                    layer.options.draggable = true;
-                }else if(type==='polyline'){
-                    angular.copy(layer.getLatLngs(), latLngs);
-                    latLngs = latLngs.map(cleanObj);
-                }
-                editableLayers.addLayer(layer);
-                scope[attrs.ngModel].geoData.latLngs = latLngs;
-                scope[attrs.ngModel].geoData.layerType = type;
+                    $scope.$apply(
+                    $http.get('http://nominatim.openstreetmap.org/reverse' + L.Util.getParamString(parameters)).
+                        success(function(data) {
+                            var location = '';
+                            if(data.address.road){
+                                location += data.address.road + " ";
+                            }
+                            if(data.address.city){
+                                location += data.address.city + ", ";
+                            }if(data.address.state){
+                                location += data.address.state;
+                            }
+                            $scope.place.location = location;
+                        }));
+                };
 
-                url = GetServiceUrl(latLngs[0]);
-                GetData(url);
-            });
+                map.on('draw:drawstart', function (e) {
+                    var type = e.layerType;
 
-            map.on('dragend', function(e){
+                    map.removeLayer(marker);
 
-            });
+                    if(type === 'marker'){
+                    }else if(type === 'polyline'){
+                        editableLayers.clearLayers();
+                    }
+                });
 
-            function onLocationFound(e) {
-                var radius = e.accuracy / 2;
+                map.on('draw:created', function (e) {
+                    var type = e.layerType,
+                        layer = e.layer,
+                        latLngs = [];
 
-                marker = L.marker(e.latlng).addTo(map);
+                    function cleanObj(obj) {
+                        return {lat: obj.lat, lon: obj.lng};
+                    }
+
+                    if (type === 'marker') {
+                        editableLayers.clearLayers();
+                        latLngs = [cleanObj(layer.getLatLng())];
+                        marker = e.layer;
+                        marker.on('dragend', function(e){
+                            latLngs = [cleanObj(e.target.getLatLng())];
+                            $scope.place.geoData.latLngs = latLngs;
+                            GetData(latLngs[0]);
+                        });
+
+                        layer.options.draggable = true;
+                    }else if(type==='polyline'){
+                        angular.copy(layer.getLatLngs(), latLngs);
+                        latLngs = latLngs.map(cleanObj);
+                    }
+                    editableLayers.addLayer(layer);
+                    $scope.place.geoData.latLngs = latLngs;
+                    $scope.place.geoData.layerType = type;
+
+                    GetData(latLngs[0]);
+                });
+
+                map.locate({setView: true});
+            }else if($scope.mode === 'directions'){
+                var southwest = new L.LatLng($scope.$parent.bounds.southwest.lat, $scope.$parent.bounds.southwest.lng);
+                var northeast = new L.LatLng($scope.$parent.bounds.northeast.lat, $scope.$parent.bounds.northeast.lng);
+                var bounds = new L.LatLngBounds(southwest, northeast);
+                map.fitBounds(bounds);
+
+                latLngs.push($scope.$parent.steps[0].start_location);
+                latLngs.push($scope.$parent.steps[0].end_location);
+                for (var i = 1; i <= $scope.$parent.steps.length - 1; i++) {
+                    latLngs.push($scope.$parent.steps[i].end_location);
+                };
+                path = L.polyline(latLngs).addTo(map);
+
+                startMarker = L.marker(latLngs[0]).addTo(map);
+                finishMarker = L.marker(latLngs[latLngs.length - 1]).addTo(map);
+                //prevent zoom out from bounds
+                //make sure bounds are 
+                //map.fitBounds();
+
             }
+        },
+        link: function(scope, element, attrs) {
 
-            function onLocationError(e) {
-                alert(e.message);
-            }
-
-            map.on('locationfound', onLocationFound);
-            map.on('locationerror', onLocationError);
-
-            map.locate({setView: true});
         }
     };
-  }])
-  .directive('ngFocus', [function() {
+}]).directive('ngFocus', [function() {
     var FOCUS_CLASS = "ng-focused";
     return {
         restrict: 'A',
@@ -365,7 +391,7 @@ angular.module('urbnEscape.directives', [])
             //On cancel delete image from Cloudinary
         }
     };
-}]).directive('placeForm', ['$rootScope', '$http', 'Session', 'cloudinary', function($rootScope, $http, Session, cloudinary) {
+}]).directive('placeForm', ['$rootScope', '$http', function($rootScope, $http) {
     return {
         restrict: 'A',
         replace: true,
@@ -426,6 +452,23 @@ angular.module('urbnEscape.directives', [])
                     element.find('input').attr('disabled', 'disabled');
                     element.find('textarea').attr('disabled', 'disabled');
                 }
+            });
+        }
+    };
+}]).directive('backButton', ['$location', function($location) {
+    return {
+        restrict: 'A',
+        replace: false,
+        controller: function($scope){
+            $scope.showButton = function() {
+                var path = $location.path();
+                return (path !== '/placesView');
+            };
+        },
+        link: function(scope, element, attrs){
+            element.bind('click', function(evt){
+                history.back();
+                scope.$apply();
             });
         }
     };

@@ -1,11 +1,14 @@
 <nav class="navbar navbar-default" role="navigation" ng-controller="MainCtrl">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img src="/public/img/x1/main_logo.png"></a>
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
+    <div class="container navbar-header">
+        <div class="row">
+            <div class="col-xs-2 text-left"><button back-button class="btn btn-navbar" ng-show="showButton()">Back</button></div>
+            <div class=="col-xs-8 text-center"><a class="navbar-brand" href="#"><img src="/public/img/x1/main_logo.png"></a></div>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+        </div>
     </div>
     <div class="navbar-collapse collapse">
         <div class="navbar-header navbar-right">

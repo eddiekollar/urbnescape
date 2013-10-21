@@ -9,7 +9,25 @@ angular.module('urbnEscape', ['urbnEscape.filters', 'urbnEscape.services', 'urbn
     $routeProvider.when('/placesView',          {templateUrl: '/public/partials/placesView.html', controller: 'PlacesCtrl'});
     $routeProvider.when('/placeDetailsView',    {templateUrl: '/public/partials/placeDetailsView.html', controller: 'PlaceDetailsCtrl'});
     $routeProvider.when('/profile',             {templateUrl: '/public/partials/profile.html', controller: 'ProfileCtrl'});
-    $routeProvider.when('/favorites',           {templateUrl: '/public/partials/placesView.html', controller: 'FavoritesCtrl'})
+    $routeProvider.when('/favorites',           {templateUrl: '/public/partials/placesView.html', controller: 'FavoritesCtrl'});
+    $routeProvider.when('/placeDirections',     {templateUrl: '/public/partials/placeDirections.html', controller: 'DirectionsCtrl', 
+        resolve: {
+          directions: function($q, Session, Directions){
+            var deferred = $q.defer();
+
+            var successCb = function (err, result) {
+                if (angular.equals(result, null)) {
+                    deferred.reject(err);
+                }
+                else {
+                    deferred.resolve(result);
+                }
+            };
+
+            Directions.getDirections(Session.getLocation(), Session.place.geoData.latLngs[0], successCb);
+            return deferred.promise;
+          }
+    }});
     $routeProvider.otherwise({redirectTo: '/placesView'});
 
   }]);

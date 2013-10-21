@@ -32,8 +32,6 @@ angular.module('urbnEscape.services', []).
 
                     Session.geo.lat = position.coords.latitude;
                     Session.geo.lon = position.coords.longitude;
-
-                    console.log("Original location: " + position.coords.longitude + " " + position.coords.latitude);
                 });
                 /*
                 watchID = navigator.geolocation.watchPosition(function(position) {
@@ -45,6 +43,9 @@ angular.module('urbnEscape.services', []).
               /* geolocation IS NOT available */
               console.log("geolocation not available");
             }
+        },
+        getLocation: function() {
+            return Session.geo;
         },
         isAuthenticated: function() {
             return Session.data.authenticated;
@@ -65,6 +66,20 @@ angular.module('urbnEscape.services', []).
         update: {method:'PUT', data: {}},
         remove: {method:'DELETE'}
     });
+}).factory('Directions', function($http){
+    var Directions = {
+        getDirections: function(origin, destination, fn){
+            $http.get('http://maps.googleapis.com/maps/api/directions/json?origin=' + origin.lat + ',' + origin.lon 
+                + '&destination=' + destination.lat + ',' + destination.lon + '&sensor=false')
+                .success(function(data){
+                    fn(null, data);
+                }).error(function(error) {
+                    fn(error, null);
+                });
+        }
+    };
+
+    return Directions;
 });
 
 angular.module('urbnEscape.cloudinary',[])
@@ -80,7 +95,7 @@ angular.module('urbnEscape.cloudinary',[])
                 cb(data);
             }).
             error(function(data, status, headers, config) {
-                alert(status + " | bad");
+                console.log(status + " | bad");
             });
     }}
 });

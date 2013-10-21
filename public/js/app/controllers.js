@@ -4,22 +4,7 @@
 
 angular.module('urbnEscape.controllers', ['ngCookies'])
 .controller('MainCtrl', ['$rootScope', '$scope', '$http', '$location', '$cookieStore', 'Session', function($rootScope, $scope, $http, $location, $cookieStore, Session){
-    if ("geolocation" in navigator) {
-      /* geolocation is available */
-        navigator.geolocation.getCurrentPosition(function(position) {
-            $cookieStore.put('geo.lat', position.coords.latitude);
-            $cookieStore.put('geo.lon', position.coords.longitude);
-        });
-        /*
-        watchID = navigator.geolocation.watchPosition(function(position) {
-            $cookieStore.put('geo.lat', position.coords.latitude);
-            $cookieStore.put('geo.lon', position.coords.longitude);
-            console.log("Location changed: " + position.coords.longitude + " " + position.coords.latitude);
-        });*/
-    } else {
-      /* geolocation IS NOT available */
-      console.log("geolocation not available");
-    }
+    Session.setLocation();
     $scope.category = Session.currentCategory;
     $cookieStore.put('CurrentCategory', $scope.category);
     
@@ -46,6 +31,10 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
                 $scope.errorMessage = error.message;
             });
     };
+
+    $scope.back = function() {
+        console.log($location);
+    }
 }]).controller('LogInCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     $scope.errorMessage = '';
 
@@ -67,9 +56,7 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
                 //$window.location.href = url;
             });
     };
-
-    }])
-  .controller('SignUpCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
+}]).controller('SignUpCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     $scope.signUp = function(){
         $http.post('/-/api/v1/user', $scope.user)
             .success(function(user){
@@ -249,6 +236,10 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
         }).error(function(error) {
             console.log(error);
         });
+
+    $scope.getDirections = function(){
+        $location.path('/placeDirections');
+    }
 }]).controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     if(!$rootScope.authenticated){
         $location.path('/placesView');
@@ -290,29 +281,6 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
 
         $scope.setEditMode();
     };
-}]).controller('MapCtrl', ['$scope', '$http', 'Session', function($scope, $http, Session) {
-    $scope.place = Session.place;
-
-    //redo this: default to users location
-    var latLng = new L.LatLng(0, 0);
-
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/96818/256/{z}/{x}/{y}.png',
-    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18}),
-    map = new L.Map('map', {layers: [cloudmade], center: latLng, zoom: 14 });
-
-    if (typeof $scope.place.geoData.layerType !== 'undefined') {
-        var latLngs = $scope.place.geoData.latLngs;
-        if($scope.place.geoData.layerType === 'marker'){
-            var marker = L.marker(latLngs[0]).addTo(map);
-             map.setView(latLngs[0], 16);
-        }else{
-            var path = L.polyline($scope.place.geoData.latLngs).addTo(map);
-            map.fitBounds(path.getBounds());
-            var startMarker = L.marker(latLngs[0]).addTo(map);
-            var finishMarker = L.marker(latLngs[latLngs.length - 1]).addTo(map);
-        }
-
-    };
 }]).controller('FavoritesCtrl', ['$rootScope', '$scope', '$http', '$location' ,'Session', function($rootScope, $scope, $http, $location, Session) {
     $scope.hasCategory = false;
 
@@ -342,4 +310,10 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
             }
         }
     };
+}]).controller('DirectionsCtrl', ['$rootScope', '$scope', '$http', '$location' ,'directions', function($rootScope, $scope, $http, $location, directions) {
+    $scope.distance = directions.routes[0].legs[0].distance.text;
+    $scope.duration = directions.routes[0].legs[0].duration.text;
+    $scope.bounds = directions.routes[0].bounds; 
+    $scope.steps = directions.routes[0].legs[0].steps;
+
 }]);
