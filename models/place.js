@@ -9,20 +9,21 @@ var placeSchema = new Schema({
     location:   {type: String, default: ''},
     geoData:    {
         layerType:   { type: String, default: 'marker' },
-        latLngs: [ {lat:    {type: Number, default: 0.0}, 
+        latLngs: [ {lat:    {type: Number, default: 0.0},
                     lon:    {type: Number, default: 0.0}}
-                ]  
+                ]
     },
     crowdScore:         {type: Number, default: 0},
     quietlevelScore:    {type: Number, default: 0},
     category:           {type: String, default: 'VIEW'},
     description:        {type: String, default: ''},
     reviews:            [{type: Schema.Types.ObjectId, ref: 'Review'}],
+    activities:         [{type: String, default: ''}],
     image:      {
         id:     { type: String, default: ''},
         format: { type: String, default: ''},
         version: { type: String, default: ''}
-    }, 
+    },
     createdDate:        {type: Date, default: Date.now},
     createdBy:          {type: Schema.Types.ObjectId, ref: 'User'}
 });

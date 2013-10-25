@@ -270,7 +270,7 @@ angular.module('urbnEscape.directives', [])
         }
     };
 }]).directive('placeDiv', ['$rootScope', '$http', 'Session', function($rootScope, $http, Session) {
-    var placeTemplate = '<div class="well col-12" ng-controller="PlaceCtrl" ng-transclude> \
+    var placeTemplate = '<div class="panel col-12" ng-controller="PlaceCtrl" ng-transclude> \
             <div class="row"> \
                 <div class="col-xs-3 col-sm-3 col-md-3"> \
                     <img src="http://placehold.it/100x100" alt="..." class="img-circle img-responsive"> \
@@ -469,6 +469,96 @@ angular.module('urbnEscape.directives', [])
             element.bind('click', function(evt){
                 history.back();
                 scope.$apply();
+            });
+        }
+    };
+}]).directive('activityTable', [function() {
+    return {
+        restrict: 'A',
+        replace: true,
+        template: '<div><div ng-click="toggleShowActivities()"><img src="/public/img/x1/icon_activities.png"/><span ng-show="context === \'edit\'">SELECT</span> ACTIVITIES \
+            <span class="glyphicon pull-right"></span></div> \
+            <div ng-show="showActivities"> \
+                  <table class="table"> \
+                      <tbody> \
+                      </tbody> \
+                  </table> \
+            </div></div>',
+        scope: {
+          place: '=',
+          context: '@'
+        },
+        controller: function($scope, $element) {
+            console.log($scope.context);
+            $scope.showActivities = ($scope.context === 'edit');
+
+            $scope.toggleShowActivities = function() {
+                if($scope.context === 'view'){
+                    $scope.showActivities = !$scope.showActivities;
+                }
+            };
+
+            $scope.changeActivityStatus = function(){
+                console.log($element);
+                /*
+                if($scope.place.activities.indexOf(activity) >= 0){
+                    //remove
+                }else{
+                    $scope.place.activities.push(activity);
+                }*/
+            };
+        },
+        link: function(scope, element, attrs){
+            var activities = ['beachball', 'bench', 'bike', 'birdwatching', 'hike', 'jog', 'magic', 'pets', 'playground', 'read', 'sit', 'sleep', 'sports', 'surf',
+                              'swim', 'walk', 'yoga'];
+
+            var numActivities = activities.length;
+            var maxCols = 6;
+
+            var tableElem = element.find('table');
+            for( var i =0 ; i < (numActivities/maxCols);i++){
+              tableElem.append('<tr>');
+              for( var j =0 ; j < maxCols;j++){
+                  //$scope.activities[i][j] = activities.shift();
+                if(activities.length > 0) {
+                    var activity = activities.shift();
+                    if(scope.place.activities.indexOf(activity) >= 0){
+                        element.find('tbody').append('<td><img id=' + activity + ' src="/public/img/x1/icon_' + activity + '_orange.png"/></td>');
+                    }else{
+                        element.find('tbody').append('<td><img id=' + activity + ' src="/public/img/x1/icon_' + activity + '_gray.png"/></td>');
+                    }
+                }
+              }
+              tableElem.append('</tr>');
+            }
+
+            if(scope.context === 'edit'){
+                var img  = element.find('tbody').find('img');
+                console.log(img);
+                img.css('cursor','pointer');
+                img.bind('click', function(event){
+                    var activity = event.target.id;
+                    if(scope.place.activities.indexOf(activity) < 0){
+                        event.target.src='/public/img/x1/icon_' + activity + '_orange.png';
+                        scope.place.activities.push(activity);
+                    }else{
+                        event.target.src='/public/img/x1/icon_' + activity + '_gray.png';
+                        scope.place.activities.splice(scope.place.activities.indexOf(activity), 1);
+                    }
+                });
+                //img add on click attribute
+            }
+
+            scope.$watch('showActivities', function(newVal, oldVal){
+                if(scope.context === 'view'){
+                    if(newVal){
+                        element.find('span').removeClass('glyphicon-chevron-right');
+                        element.find('span').addClass('glyphicon-chevron-down');
+                    }else{
+                        element.find('span').removeClass('glyphicon-chevron-down');
+                        element.find('span').addClass('glyphicon-chevron-right');
+                    }
+                }
             });
         }
     };

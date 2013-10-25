@@ -4,8 +4,12 @@
   <form role="form" name="place_form" class="form-inline">
 
   <div place-form context="addPlace" place="place" ng-transclude></div>
-    <!-- Multiple Radios (inline) -->
-  <div class="well">
+  
+  <div class="panel">
+
+    <div activity-table place="place" context="edit"></div>
+  </div>
+  <div class="panel">
     <div class="row">
       <div class="input-group col-xs-6 col-sm-5 col-sm-offset-1">
             <label class="control-label" for="quietlevel">Quiet Level</label>

@@ -77,6 +77,7 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
     $scope.place.category = Session.currentCategory;
     $scope.place.geoData = {};
     $scope.place.image = {};
+    $scope.place.activities = [];
     $scope.review = {quietlevel:1, crowd: 1};
 
     $scope.categories = ['VIEW', 'PARK', 'PATH', 'SOLITUDE'];
@@ -239,7 +240,8 @@ angular.module('urbnEscape.controllers', ['ngCookies'])
 
     $scope.getDirections = function(){
         $location.path('/placeDirections');
-    }
+    };
+
 }]).controller('ProfileCtrl', ['$rootScope', '$scope', '$http', '$location', function($rootScope, $scope, $http, $location) {
     if(!$rootScope.authenticated){
         $location.path('/placesView');

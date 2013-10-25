@@ -1,0 +1,12 @@
+<div class="container">
+    <div map id="map" mode="directions" place="place" class="col-xs-12" ng-transclude></div>
+    <div class="panel" >
+    	<div clas="panel-heading">Distance: {{ distance }} Duration: {{ duration }}</div>
+    	<div ng-repeat="step in steps">
+    		<div class="row">
+    			<div class="col-xs-7">{{ $index + 1}}. <span ng-bind-html-unsafe="step.html_instructions"></span></div>
+    			<div class="col-xs-2">{{ step.distance.text }}</div><div class="col-xs-2">{{ step.duration.text }}</div>
+    		</div>
+    	</div>
+    </div>
+</div>

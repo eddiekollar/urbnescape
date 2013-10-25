@@ -6,17 +6,27 @@
 
     <div map id="map" mode="view" place="place" class="col-xs-12"></div>
 
-    <div>
-        <button class="btn btn-success" ng-click="getDirections()">Directions</button>
-        <div class="pull-right addreview-btn" ng-show="authenticated && !hasReview && !editMode">
-            <a class="btn btn-warning" ng-click="createReview()">
+    <div class="container">
+        <div class="pull-right addreview-btn" >
+            <button class="btn btn-warning" ng-click="createReview()" ng-show="authenticated && !hasReview && !editMode">
                 ADD TIP
                 <span class="glyphicon glyphicon-plus-sign"></span>
-            </a>
+            </button>
         </div>
+    </div>
+    <div>
+        <div class="panel">
+            <ul class="list-group list-group-flush" ng-model="place">
+                <li class="list-group-item" ng-click="getDirections()"><img src="/public/img/x1/icon_directions.png"/> DIRECTIONS<span class="glyphicon glyphicon-chevron-right pull-right"></span></li>
+                <li class="list-group-item"><div activity-table place="place" context="view"></div></li>
+                <li class="list-group-item"><img src="/public/img/x1/icon_noise.png"/> QUIET LEVEL {{ place.quietlevel }}</li>
+                <li class="list-group-item"><img src="/public/img/x1/icon_crowd.png"/> CROWD {{ place.crowd }}</li>
+            </ul>
+        </div>
+
         <div ng-show="authenticated && editMode">
             <form role="form" name="addreview_form" class="form-inline">
-                <div class="well col-12">
+                <div class="panel col-12">
                     <div class="input-group col-xs-6 col-sm-5 col-sm-offset-1">
                         <label class="control-label" for="quietlevel">Quiet Level</label>
                         <div class="">
@@ -95,7 +105,7 @@
             </form>
         </div>
         <div ng-show="authenticated && hasReview && !editMode">
-            <div class="well col-12">
+            <div class="panel col-12">
                 <div class="col-xs-11 col-sm-offset-1">
                     <span class="glyphicon glyphicon-user"></span>
                     {{ user.profile.username }}
@@ -131,7 +141,7 @@
             </div>
         </div>
         <div ng-repeat="review in reviews">
-            <div class="well col-12" ng-hide="review._id == myReview._id">
+            <div class="panel col-12" ng-hide="review._id == myReview._id">
                 <div class="col-xs-11 col-sm-offset-1">
                     <span class="glyphicon glyphicon-user"></span>
                     {{ review.createdBy.profile.username }}

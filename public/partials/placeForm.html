@@ -1,0 +1,131 @@
+<div class="panel">
+  <div class="row">
+    <div class="col-xs-3 col-sm-offset-1">
+      <div add-place-pic-div></div>
+    </div>
+    <div class="col-xs-8">
+      <div class="row">
+        <div class="form-group col-xs-7">
+          <span class="glyphicon glyphicon-heart"></span>
+          <label class="control-label" for="name">Name</label>
+          <input id="name"
+                 name="name"
+                 type="text"
+                 placeholder="Name of Place"
+                 class="form-control"
+                 ng-model="place.name"
+                 ng-minlength="2"
+                 ng-maxlength="128"
+                 required
+                 ng-focus/>
+          <div class="alert alert-danger"
+               ng-show="place_form.name.$dirty && place_form.name.$invalid && !place_form.name.$focused">
+            <small class="error"
+                   ng-show="place_form.name.$error.required">
+                Place name is required.
+            </small>
+            <small class="error"
+                   ng-show="place_form.name.$error.minlength">
+                Place name is required to be at least 2 characters
+            </small>
+            <small class="error"
+                   ng-show="place_form.name.$error.maxlength">
+                Place name cannot be longer than 128 characters
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-xs-7">
+          <span class="glyphicon glyphicon-map-marker"></span>
+          <label class="control-label" for="location">Location</label>
+          <input id="location"
+                 name="location"
+                 type="text"
+                 placeholder="Add a location"
+                 class="form-control"
+                 ng-model="place.location"
+                 ng-minlength="2"
+                 ng-maxlength="128"
+                 required
+                 ng-focus/>
+          <div class="alert alert-danger"
+               ng-show="place_form.location.$dirty && place_form.location.$invalid && !place_form.location.$focused">
+            <small class="error"
+                   ng-show="place_form.location.$error.required">
+                Location name is required.
+            </small>
+            <small class="error"
+                   ng-show="place_form.location.$error.minlength">
+                Location name is required to be at least 2 characters
+            </small>
+            <small class="error"
+                   ng-show="place_form.location.$error.maxlength">
+                Place name cannot be longer than 128 characters
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="category-group col-xs-12">
+          <span class="glyphicon glyphicon-tag"></span><label class="control-label"> Category</label><br>
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-warning" ng-class="{'active': {{ category == place.category}}}" ng-repeat='category in categories' ng-click="activate(category)">
+              <input type="radio" id="{{category}}" ng-model="place.category" name="radio">{{category}}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1">
+      <span class="glyphicon glyphicon-pencil"></span>
+      <label class="control-label" for="description">Description</label>
+      <textarea id="description"
+                name="description"
+                class="form-control"
+                rows="4"
+                placeholder="Add a description"
+                ng-model="place.description"
+                ng-minlength="2"
+                ng-maxlength="512"
+                required
+                ng-focus>
+                </textarea>
+      <div class="alert alert-danger"
+           ng-show="place_form.description.$dirty && place_form.description.$invalid && !place_form.description.$focused">
+        <small class="error"
+               ng-show="place_form.description.$error.required">
+            Description is required.
+        </small>
+        <small class="error"
+               ng-show="place_form.description.$error.minlength">
+            Description is required to be at least 2 characters
+        </small>
+        <small class="error"
+               ng-show="place_form.description.$error.maxlength">
+            Description cannot be longer than 512 characters
+        </small>
+      </div>
+    </div>
+  </div>
+  <div ng-switch on="context">
+    <div class="row" ng-switch-when="placeDetails">
+      <div class="control-group col-sm-offset-1 col-xs-10">
+        <div class="controls">
+          <div ng-switch on="editMode">
+            <div ng-switch-when="true">
+              <button type="submit" class="btn btn-success" ng-disabled="place_form.$invalid" ng-click="save()">Save</button>
+              <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+            </div>
+            <div ng-switch-when="false">
+              <button class="btn btn-success" ng-hide="editMode" ng-click="setEditMode()">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
