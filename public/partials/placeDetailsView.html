@@ -4,7 +4,9 @@
         <div place-form context="placeDetails" place="place" ng-transclude ng-switch-when="true"></div>
     </div>
 
-    <div map id="map" mode="view" place="place" class="col-xs-12"></div>
+    <div class="container-map">
+        <div map id="map" mode="view" place="place"></div>
+    </div>
 
     <div class="container">
         <div class="pull-right addreview-btn" >
@@ -23,7 +25,22 @@
                 <li class="list-group-item"><img src="/public/img/x1/icon_crowd.png"/> CROWD {{ place.crowd }}</li>
             </ul>
         </div>
-
+        
+        <div class="panel">
+                    <div class="row">
+                        <div class="col-xs-12"><img src="/public/img/x1/icon_photo.png"/> PHOTOS</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="col-xs-2 img-responsive"><img src="http://placehold.it/100x100" alt="..."/></div>
+                            <div class="col-xs-2"><img src="http://placehold.it/100x100" alt="..."/></div>
+                            <div class="col-xs-2"><img src="http://placehold.it/100x100" alt="..."/></div>
+                            <div class="col-xs-2"><img src="http://placehold.it/100x100" alt="..."/></div>
+                            <div class="col-xs-2"><img src="http://placehold.it/100x100" alt="..."/></div>
+                        </div>
+                    </div>
+        </div>
+        
         <div ng-show="authenticated && editMode">
             <form role="form" name="addreview_form" class="form-inline">
                 <div class="panel col-12">

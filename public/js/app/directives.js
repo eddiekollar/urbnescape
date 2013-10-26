@@ -289,8 +289,8 @@ angular.module('urbnEscape.directives', [])
                     </button> \
                 </div> \
                 <div class="col-xs-3">{{place.geoData.distance | number}} mi</div> \
-                <div class="col-xs-3">Crowd: {{place.crowdScore | number}}</div> \
-                <div class="col-xs-3">Quiet Level: {{place.quietlevelScore | number}}</div> \
+                <div class="col-xs-3"><img src="/public/img/x1/icon_noise.png"/> {{place.quietlevelScore | number}}</div> \
+                <div class="col-xs-3"><img src="/public/img/x1/icon_crowd.png"/> {{place.crowdScore | number}}</div> \
                 </p> \
             </div> \
         </div>';
@@ -302,10 +302,10 @@ angular.module('urbnEscape.directives', [])
         transclude: true,
         link: function(scope, element, attrs){
             if(scope.place.image.id !== ''){
-                element.find('img').replaceWith($.cloudinary.image(scope.place.image.id, 
+                element.find('img').eq(0).replaceWith($.cloudinary.image(scope.place.image.id, 
                           { format: scope.place.image.format, version: scope.place.image.version, 
                             crop: 'fill', width: 100, height: 100 }));
-                    element.find('img').addClass('img-circle');
+                    element.find('img').eq(0).addClass('img-circle').addClass('img-responsive');
             }
             scope.$watch(attrs.ngModel, function(oldVal, newVal){
                 if (typeof oldVal === 'undefined' && typeof newVal === 'undefined') {

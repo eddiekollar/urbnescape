@@ -57,6 +57,14 @@ body {
     margin: 40px 0;
 }
 
+#map {
+    height: 300px;
+    margin: 30px auto;
+    border: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 600px) {
     /* Remove the padding we set earlier */
@@ -72,12 +80,11 @@ body {
     }
 }
 
-#map {
-    height: 300px;
-    margin: 30px 0;
-    border: solid;
-    border-width: 1px;
-    border-color: #cccccc;
+@media only screen and (max-width: 599px) {
+    .container-map {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
 }
 
 a, p{
