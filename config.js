@@ -18,8 +18,8 @@ module.exports = {
         defaultFromAddress: 'First Last <test@examle.com>'
     },
     fb: {
-        appId: '640008739351430'
-        , appSecret: '918715fbba50580edbd07aa8f42e9245'
+        appId: APP_ID
+        , appSecret: APP_SECRET
     }
 };
 
